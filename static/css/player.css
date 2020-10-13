@@ -1,0 +1,141 @@
+body{
+	padding: 0px;
+	margin: 0px;
+	background: black;
+}
+.flix_app_player{
+	height: calc(100% - 60px);
+	width: 100%;
+	background: black;
+	position: absolute;
+}
+footer>img{
+
+	height: 45px;
+
+}
+footer>a:hover{
+	color: #ccc;
+}
+footer>a{
+    height: 45px;
+    min-width: 45px;
+    display: inline-block;
+    font-size: 16pt;
+    color: white;
+    text-align: center;
+    float: left;
+}
+footer>a>i{
+	line-height: 45px !important;
+}
+footer{
+	position: absolute;
+	bottom: 0px;
+	background: black;
+	height: 50px;
+	width: 100%;
+}
+.sources-dropdown>button{
+	background: black;
+    border: 2px solid white;
+    border-radius: 0px;
+}
+.sources-dropdown > button{
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 0px;
+    color: white;
+    font-weight: 700;
+}
+.sources-dropdown .dropdown-menu label{
+    margin-left: 5px;
+}
+.sources-dropdown .dropdown-menu{
+	border-radius: 0px;
+    min-width: 25em !important;
+}
+.sources-dropdown .dropdown-menu .dropdown-item{
+	padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    padding-right: 10px;
+}
+iframe{
+	height: 100%;
+    width: 100%;
+    border: 0px;
+}
+*:focus {outline:0 !important;}
+.dropdown-menu{
+	background-color: #00000f !important;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.dropdown-item{
+	color: #b3b3b3 !important;
+}
+.dropdown-divider{
+	border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+.dropdown-item:focus, .dropdown-item:hover{
+	background-color: #141421;
+}
+.video-js{
+	position: initial !important;
+}
+
+.vjs-big-play-button{
+	background: #00b3ff !important;
+    border: 0 !important;
+    border-radius: 100% !important;
+    color: #fff !important;
+    left: 50% !important;
+    opacity: .9 !important;
+    padding: calc(10px * 1.5) !important;
+    padding: calc(var(--plyr-control-spacing,10px) * 1.5) !important;
+    position: absolute !important;
+    top: 50% !important;
+    transform: translate(-50%,-50%) !important;
+    transition: .3s !important;
+    z-index: 2 !important;
+}
+.vjs-big-play-button{
+    font-size: 3em !important;
+    line-height: 50px !important;
+    height: 50px !important;
+    width: 50px !important;
+}
+.next-episode{
+
+    background: black;
+    border: 2px solid white;
+    color: white;
+    display: inline-block;
+    border-radius: 0px;
+    height: 40px;
+    line-height: 25px;
+    font-weight: bold;
+    box-shadow: 0 0 black;
+    margin-left: 10px;
+    margin-right: 0px;
+
+}
+.next-episode i{
+	line-height: 25px !important;
+}
+.source-btn .fa-star{
+    color: #ffa501;
+}
+
+.for-phone{
+    display: none;
+}
+
+@media (max-width:768px) {
+    .for-phone{
+        display: block;
+    }
+    .for-desktop{
+        display: none;
+    }
+}

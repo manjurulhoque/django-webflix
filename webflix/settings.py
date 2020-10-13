@@ -7,7 +7,7 @@ SECRET_KEY = 'to%cff22c#x3zfpt*0n!)yv!s^@*0k3&$^*qt-huo=h_wvyw1@'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -16,6 +16,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "accounts",
+    "core"
 ]
 
 MIDDLEWARE = [
@@ -51,7 +53,7 @@ WSGI_APPLICATION = 'webflix.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'flix.sqlite3',
     }
 }
 
@@ -81,3 +83,11 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+AUTH_USER_MODEL = "accounts.User"
