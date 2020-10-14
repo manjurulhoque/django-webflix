@@ -134,11 +134,11 @@
 
                 </div>
                 <div class="col-sm-3 col-md-3 account-action for-desktop">
-                    {% if request.is_authenticated %}
+                    {% if request.user.is_authenticated %}
                         <div class="btn-group float-right ">
                             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false"><span
-                                    class="for-desktop"> username </span>
+                                    class="for-desktop"> {{ request.user.get_full_name }} </span>
                                 <img src="" alt="">
                             </button>
                             <div class="dropdown-menu dropdown-login">
@@ -152,7 +152,7 @@
                                     <i class="fas fa-star"></i>Subscriptions
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{% url 'accounts:logout' %}">
                                     <i class="fas fa-sign-out-alt"></i> Logout
                                 </a>
                             </div>
@@ -160,7 +160,7 @@
                     {% else %}
                         <div class="float-right">
                             <a href="{% url 'accounts:register' %}" class="btn btn-link"> Register </a>
-                            <a href="{% url 'accounts:login' %}" class="btn btn-primary open-login">Login </a>
+                            <a href="{% url 'accounts:login' %}" class="btn btn-primary">Login </a>
                         </div>
                     {% endif %}
                 </div>
