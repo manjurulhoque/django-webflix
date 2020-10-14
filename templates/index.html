@@ -1,1 +1,32 @@
 {% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="row content-section">
+        <div class="filter-section">
+            <div class="btn-group season-dropdown" role="group">
+                <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    All Genres
+                </button>
+                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                    <a class="dropdown-item" href="#">All Genres</a>
+                    {% for genre in genres %}
+                        <a class="dropdown-item" href="#">{{ genre }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row content-section">
+        <div></div>
+        {% for movie in movies %}
+            <a href="#" class="poster col-4 col-md-2 col-xxl-2">
+                <div>
+                    <img width="170" height="255" src="{{ movie.thumbnail.url }}" alt=""/>
+                    <div></div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
+{% endblock %}

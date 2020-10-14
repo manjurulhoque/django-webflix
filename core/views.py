@@ -1,5 +1,10 @@
 from django.shortcuts import render
 
+from genres.models import Genre
+from movies.models import Movie
+
 
 def home(request):
-    return render(request, "index.html")
+    genres = Genre.objects.all()
+    movies = Movie.objects.all()
+    return render(request, "index.html", {"genres": genres, "movies": movies})
