@@ -5,6 +5,7 @@ from time import strftime
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
+from core.models import Actor
 from genres.models import Genre
 
 
@@ -26,8 +27,10 @@ class Movie(models.Model):
     downloads = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now=True)
     genres = models.ManyToManyField(Genre)
+    actors = models.ManyToManyField(Actor)
     thumbnail = models.ImageField(upload_to=thumbnail_directory_path)
     cover = models.ImageField(upload_to=cover_directory_path)
+    is_free = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
