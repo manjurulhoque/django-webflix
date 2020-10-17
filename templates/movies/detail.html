@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div class="row content-section">
+        <div class="col-md-12">
+            <div class="movie-header-bg" style=" background-image: url('{{ movie.cover.url }}');">
+                <div class="movie-header">
+                    <div class="movie-title">{{ movie.title }}</div>
+                    <div class="movie-infos">{{ movie.year }} • {{ movie.classification }} • {{ movie.duration }} {% for genre in movie.genres.all %} • <a href="#">{{ genre.title }}</a>{% endfor %}
+                    </div>
+                    <div class="header-buttons">
+                        {% if user.is_authenticated %}
+                            <button class="btn-fav" alt="{{ movie.id }}"><i class="far fa-heart"></i></button>
+                        {% else %}
+                            <button class="open-login"><i class="far fa-heart"></i></button>
+                        {% endif %}
+                        <button id="share-btn">
+                            <i class="fa fa-share "></i>SHARE
+                        </button>
+                    </div>
+                    <div class="header-ratings">
+                        {{ movie.rating }}/5 • {{ movie.imdb }} / 10 <span class="imdb">IMDb</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="dropdown">
+                {% if movie.is_free %}
+                    <a href="#" class="btn play-btn"><span class="fa fa-play"></span> Play Movie</a>
+                {% elif movie.is_free and user_membership.membership.membership_type == 'Free' %}
+                    <a href="#" class="btn play-btn"><span class="fa fa-play"></span> Play Movie</a>
+                {% else %}
+                    <a href="#" class="btn play-btn"><i class="fas fa-star"></i> Subscribe to Play!</a>
+                {% endif %}
+                {% if movie.trailer != null %}
+                    <button id="trailer-btn" class="btn play-btn"><span class="fa fa-bullhorn"></span> Watch Trailer</button>
+                {% endif %}
+                <button id="subtitles-btn" class="btn play-btn movie-subtitles" data-id={{ movie.id }} data-title="{{ movie.title }}"><span class="fa fa-cc"></span> Subtitles</button>
+                <button id="downloads-btn" class="btn play-btn movie-downloads" data-id={{ movie.id }} data-title="{{ movie.title }}"><span class="fas fa-download"></span> Download</button>
+                <a class="btn play-btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="fa fa-star"></span> Rate Movie
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <div class="comment-item  review-write">
+                        <div class='alert alert-success success-review' role='alert'>
+                            <i class='fas fa-comment-alt'></i> Your Review has been added successfully!
+                        </div>
+                        <div class='alert alert-danger error-review' role='alert'>
+                            <i class='fas fa-comment-alt'></i> Your Review could not be submitted
+                        </div>
+                        <div class="rate" id="rate-input" alt="{{ movie.id }}">
+                            <input type="radio" id="star5" name="rate" value="5"/>
+                            <label for="star5" title="text">5 stars</label>
+                            <input type="radio" id="star4" name="rate" value="4"/>
+                            <label for="star4" title="text">4 stars</label>
+                            <input type="radio" id="star3" name="rate" value="3"/>
+                            <label for="star3" title="text">3 stars</label>
+                            <input type="radio" id="star2" name="rate" value="2"/>
+                            <label for="star2" title="text">2 stars</label>
+                            <input type="radio" checked="true" id="star1" name="rate" value="1"/>
+                            <label for="star1" title="text">1 star</label>
+                        </div>
+                        <textarea class="input-review" placeholder="Write you review here"></textarea>
+                        {% if user.is_authenticated %}
+                            <button alt="{{ movie.id }}" type="button" class="btn btn-primary  submit-review btn-block"><i class="fas fa-paper-plane"></i> Submit Review</button>
+                            <button alt="{{ movie.id }}" class="btn btn-primary  loading-review btn-block"><i class="fas fa-circle-notch fa-spin"></i> Review Inserting</button>
+                        {% else %}
+                            <button class="btn btn-primary btn-block open-login"><i class="fas fa-check"></i> Login to leave a review</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 padding-top-20">
+            <div class="movie-section-title">Overview</div>
+        </div>
+        <div class="col-md-12">
+            <p>
+                {{ movie.description }}
+            </p>
+        </div>
+        {% if movie.roles|length != 0 %}
+            <div class="col-md-12 padding-top-20">
+                <div class="movie-section-title">Cast</div>
+            </div>
+            <div class="flix-carousel">
+                <button class="prev_btn"><i class="fa fa-chevron-left"></i></button>
+                <button class="next_btn"><i class="fa fa-chevron-right"></i></button>
+                <div class="flix-scroll-x">
+                    No cast yet added
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <div class="background-close  serie-dialog">
+        <div class="login-box ">
+            <div class="notif-head">
+                <span class="notif-close"><i class="fa fa-times" aria-hidden="true"></i></span>
+                <span class="notif-title"><i class="fa fa-fw fa-lock"></i>  </span>
+            </div>
+            <div class="notif-body">
+                <div class="carda__body">
+                    <div class="box-content">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

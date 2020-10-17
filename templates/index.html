@@ -20,7 +20,7 @@
     <div class="row content-section">
         <div></div>
         {% for movie in movies %}
-            <a href="#" class="poster col-4 col-md-2 col-xxl-2">
+            <a href="{% url 'movies:movie-details' movie.slug %}" class="poster col-4 col-md-2 col-xxl-2">
                 <div>
                     <img width="170" height="255" src="{{ movie.thumbnail.url }}" alt=""/>
                     <div></div>

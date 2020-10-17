@@ -34,7 +34,7 @@ class UserMembership(models.Model):
         Membership, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return self.user.email
+        return "User: {} - Membership: {}".format(self.user.email, self.membership.membership_type)
 
 
 def post_save_user_membership_create(sender, instance, created, *args, **kwargs):
