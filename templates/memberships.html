@@ -1,0 +1,118 @@
+{% load static %}
+
+<!DOCTYPE>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static 'favicon.png' %}" type="image/gif" sizes="16x16">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="https://kit.fontawesome.com/017eaf7e3f.js" crossorigin="anonymous"></script>
+    <title>Webflix - Subscriptions</title>
+</head>
+
+<body class="light-mode">
+<div class="login-page-bg"></div>
+<div class="login-page-bg-blur"></div>
+<div class="login-page-content">
+    <img src="{% static "img/logo.png" %}" alt="logo">
+    {% include 'messages.html' %}
+    <form action="{% url 'core:submit-payment-method' %}" method="post">
+        {% csrf_token %}
+
+        <div class="tab-title">Subscribe now!</div>
+        <div id="subscribe-plan">
+            <div class="subscribe-title">
+                <span>1</span>
+                <h5>Select a plan that work for you,All Plans offer </h5>
+            </div>
+            <br>
+
+            <label {% if current_membership == "Free" %} style="pointer-events:none" {% endif %} class="pack {% if current_membership == "Free" %} active {% endif %}" alt="1">
+                <div>
+                    <input type="radio" name="package" required="required" value="1">
+
+                    <h5>Free</h5>
+                    <span>0 USD</span>
+                    {% if current_membership == "Free" %} <p>Currently active</p> {% endif %}
+                </div>
+            </label>
+
+            <label {% if current_membership == "Monthly" %} style="pointer-events:none" {% endif %} class="pack {% if current_membership == "Monthly" %} active {% endif %}" alt="2">
+                <div>
+                    <input type="radio" name="package" required="required" value="2">
+
+                    <h5>Monthly</h5>
+                    <span>15 USD</span>
+                    {% if current_membership == "Monthly" %} <p>Currently active</p> {% endif %}
+                </div>
+            </label>
+
+            <label {% if current_membership == "Daily" %} style="pointer-events:none" {% endif %} class="pack {% if current_membership == "Daily" %} active {% endif %}" alt="3">
+                <div>
+                    <input type="radio" name="package" required="required" value="3">
+
+                    <h5>Daily</h5>
+                    <span>1 USD</span>
+                    {% if current_membership == "Daily" %} <p>Currently active</p> {% endif %}
+                </div>
+            </label>
+            <p class="error-plan">• Please select a plan</p>
+            <span id="go-payment-method" class="float-right btn btn-primary">CONTINUE <i class="fas fa-chevron-right" aria-hidden="true"></i></span>
+        </div>
+        <div id="payment-method">
+            <div class="subscribe-title" id="selected_pack">
+                <span>1</span>
+
+                <h5>Daily</h5>
+                <span class="fas fa-check float-right" aria-hidden="true"></span>
+                <span class="float-right price-step-1">1 USD</span>
+            </div>
+            <div class="subscribe-title">
+                <span>2</span>
+                <h5>Please select your payment method : </h5>
+            </div>
+            <br>
+
+            <label class="payment" alt="paypal">
+                <div>
+                    <i class="fab fa-paypal" aria-hidden="true"></i>
+                    <input type="radio" id="form_method_0" name="method" required="required" value="paypal">
+                    <h4> PayPal</h4>
+                    <i class="fas fa-check" aria-hidden="true"></i>
+                </div>
+            </label>
+
+            <label class="payment" alt="card">
+                <div>
+                    <i class="far fa-credit-card" aria-hidden="true"></i>
+                    <input type="radio" id="form_method_1" name="method" required="required" value="card">
+                    <h4> Credit Card</h4>
+                    <i class="fas fa-check" aria-hidden="true"></i>
+                </div>
+            </label>
+
+            <p class="error-method">• Please select a payment methode</p>
+            <button id="go-to-pay" type="submit" class="float-right btn btn-primary"><i class="fas fa-check" aria-hidden="true"></i> PAY NOW</button>
+        </div>
+    </form>
+</div>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+<script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

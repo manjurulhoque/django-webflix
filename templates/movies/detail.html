@@ -32,8 +32,10 @@
                     <a href="#" class="btn play-btn"><span class="fa fa-play"></span> Play Movie</a>
                 {% elif movie.is_free and user_membership.membership.membership_type == 'Free' %}
                     <a href="#" class="btn play-btn"><span class="fa fa-play"></span> Play Movie</a>
+                {% elif not movie.is_free and user_membership.membership.membership_type == 'Monthly' or user_membership.membership.membership_type == 'Daily' %}
+                    <a href="#" class="btn play-btn"><span class="fa fa-play"></span> Play Movie</a>
                 {% else %}
-                    <a href="#" class="btn play-btn"><i class="fas fa-star"></i> Subscribe to Play!</a>
+                    <a href="{% url 'core:subscriptions' %}" class="btn play-btn"><i class="fas fa-star"></i> Subscribe to Play!</a>
                 {% endif %}
                 {% if movie.trailer != null %}
                     <button id="trailer-btn" class="btn play-btn"><span class="fa fa-bullhorn"></span> Watch Trailer</button>

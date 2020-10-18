@@ -16,9 +16,12 @@ class MovieDetailsView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(MovieDetailsView, self).get_context_data(**kwargs)
-        user_membership = get_object_or_404(UserMembership, user=self.request.user)
-        user_membership_type = user_membership.membership.membership_type
-        context['user_membership'] = user_membership
+        if self.request.user.is_authenticated:
+            user_membership = get_object_or_404(UserMembership, user=self.request.user)
+            user_membership_type = user_membership.membership.membership_type
+            context['user_membership'] = user_membership
+        else:
+            context['user_membership'] = None
         return context
 
     def get_object(self, queryset=None):
