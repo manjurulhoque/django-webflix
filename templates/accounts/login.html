@@ -25,7 +25,9 @@
 <div class="login-page-bg"></div>
 <div class="login-page-bg-blur"></div>
 <div class="login-page-content">
-    <img src="{% static "img/logo.png" %}" alt="logo">
+    <a href="{% url 'core:home' %}">
+        <img src="{% static "img/logo.png" %}" alt="logo">
+    </a>
     <div class="login-box">
         <div class="notif-head">
             <span class="notif-title"><i class="fa fa-fw fa-user-plus"></i>  Create your account now </span>

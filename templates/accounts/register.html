@@ -25,7 +25,9 @@
 <div class="login-page-bg"></div>
 <div class="login-page-bg-blur"></div>
 <div class="login-page-content">
-    <img src="{% static "img/logo.png" %}" alt="logo">
+    <a href="{% url 'core:home' %}">
+        <img src="{% static "img/logo.png" %}" alt="logo">
+    </a>
     <div class="login-box">
         <div class="notif-head">
             <span class="notif-title"><i class="fa fa-fw fa-user-plus"></i>  Create your account now </span>
@@ -76,7 +78,7 @@
                             </div>
                         </div>
                         <div>
-                            <p>You have already an account ? <a href="/login">Log in</a><br></p>
+                            <p>You have already an account ? <a href="{% url 'accounts:login' %}">Log in</a><br></p>
                         </div>
                         <input type="hidden" id="fos_user_registration_form__token" name="fos_user_registration_form[_token]" value="hWSxSdtvushefkLhOUSSrHeDmSDPHvXekttVsSM1CsU">
                     </form>
