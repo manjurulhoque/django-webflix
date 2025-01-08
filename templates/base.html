@@ -9,8 +9,7 @@
     <link rel="icon" href="{% static 'favicon.png' %}" type="image/gif" sizes="16x16">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link href="{% static "css/style.css" %}" rel="stylesheet">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -20,16 +19,16 @@
     <![endif]-->
     <script src="https://kit.fontawesome.com/017eaf7e3f.js" crossorigin="anonymous"></script>
     <title>Webflix | Free movies</title>
-    {% block head %}{% endblock %}
+    {% block styles %}{% endblock %}
 </head>
 <body class="dark-mode">
 
 <div class="container-fluid">
     <div class="row main-row">
         <div class="sidebar">
-            <h2 class="page-header logo-app">
+            <a class="page-header logo-app" href="/">
                 <img src="{% static "img/logo.png" %}" alt="logo">
-            </h2>
+            </a>
             <div class="nav-bar-container">
                 <nav class="navbar bg-light left-navbar">
                     <ul class="navbar-nav">
@@ -178,5 +177,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
 <script src="{% static 'js/app.js' %}"></script>
+{% block scripts %}{% endblock %}
 </body>
 </html>

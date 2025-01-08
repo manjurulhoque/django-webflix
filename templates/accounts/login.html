@@ -51,6 +51,26 @@
                     <form name="fos_user_registration_form" method="post" action="" class="fos_user_registration_register">
                         {% csrf_token %}
 
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    {% for field, errors in form.errors.items %}
+                                        {% for error in errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+
+                        {% if messages %}
+                            <div class="alert alert-info">
+                                {% for message in messages %}
+                                    {{ message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
                         <div class="form-group">
                             <input type="email" name="email" required="required" class="form-control" placeholder="E-mail">
                             <span class="validate-input"></span>

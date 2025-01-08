@@ -1,5 +1,5 @@
 {% for message in messages %}
-    <div class="alert alert-success">
+    <div class="alert alert-{{ message.tags }}">
         <a class="close" href="#" data-dismiss="alert">×</a>
         {{ message }}
     </div>
