@@ -109,3 +109,4 @@ else:
     STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
 LOGIN_URL = reverse_lazy('accounts:login')
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
