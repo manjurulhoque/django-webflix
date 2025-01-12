@@ -64,7 +64,7 @@
                                 {% endif %}
 
                                 {% if movie.trailer_url %}
-                                    <button class="btn btn-secondary btn-trailer" data-trailer="{{ movie.trailer_url }}">
+                                    <button class="btn btn-secondary btn-trailer" data-trailer="{{ movie.trailer_url }}" data-toggle="modal" data-target="#trailerModal">
                                         <i class="fas fa-film"></i> Watch Trailer
                                     </button>
                                 {% endif %}
@@ -75,7 +75,7 @@
                                             <i class="{% if is_favorite %}fas{% else %}far{% endif %} fa-heart"></i>
                                         </button>
                                     {% endif %}
-                                    <button class="btn btn-icon btn-share">
+                                    <button class="btn btn-icon btn-share" data-movie-id="{{ movie.id }}" data-toggle="modal" data-target="#shareModal">
                                         <i class="fa fa-share-alt"></i>
                                     </button>
                                 </div>
@@ -214,7 +214,7 @@
                         <h4 class="sidebar-title">Similar Movies</h4>
                         <div class="similar-movies-list">
                             {% for movie in similar_movies %}
-                                <a href="{% url 'movies:detail' movie.slug %}" class="similar-movie-item">
+                                <a href="{% url 'movies:details' movie.slug %}" class="similar-movie-item">
                                     <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}">
                                     <div class="similar-movie-info">
                                         <h5>{{ movie.title }}</h5>
@@ -237,35 +237,59 @@
             <div class="modal-body">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <div class="embed-responsive embed-responsive-16by9">
-                    <iframe class="embed-responsive-item" src="" allowfullscreen></iframe>
+                    <iframe class="embed-responsive-item" src="{{ movie.trailer_url }}" allowfullscreen></iframe>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Share Modal -->
 <div class="modal fade" id="shareModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Share this Movie</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h5 class="modal-title">
+                    <i class="fas fa-share-alt"></i> Share "{{ movie.title }}"
+                </h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
             </div>
             <div class="modal-body">
-                <div class="share-buttons">
-                    <a href="#" class="btn btn-facebook" target="_blank">
-                        <i class="fab fa-facebook-f"></i> Facebook
-                    </a>
-                    <a href="#" class="btn btn-twitter" target="_blank">
-                        <i class="fab fa-twitter"></i> Twitter
-                    </a>
-                    <a href="#" class="btn btn-whatsapp" target="_blank">
-                        <i class="fab fa-whatsapp"></i> WhatsApp
-                    </a>
-                    <div class="input-group mt-3">
+                <div class="share-preview">
+                    <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}" class="share-thumbnail">
+                    <div class="share-info">
+                        <h6>{{ movie.title }} ({{ movie.year }})</h6>
+                        <p>{{ movie.description|truncatechars:100 }}</p>
+                        <div class="share-buttons">
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                               class="btn-icon btn-facebook" target="_blank" title="Share on Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text=Watch {{ movie.title }} on Webflix" 
+                               class="btn-icon btn-twitter" target="_blank" title="Share on Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="https://wa.me/?text=Watch {{ movie.title }} on Webflix: {{ request.build_absolute_uri }}" 
+                               class="btn-icon btn-whatsapp" target="_blank" title="Share on WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                            <a href="https://telegram.me/share/url?url={{ request.build_absolute_uri }}&text=Watch {{ movie.title }} on Webflix" 
+                               class="btn-icon btn-telegram" target="_blank" title="Share on Telegram">
+                                <i class="fab fa-telegram-plane"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="share-link">
+                    <div class="input-group">
                         <input type="text" class="form-control" value="{{ request.build_absolute_uri }}" readonly>
                         <div class="input-group-append">
-                            <button class="btn btn-primary copy-link">Copy</button>
+                            <button class="btn btn-primary copy-link" data-clipboard-text="{{ request.build_absolute_uri }}">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -273,6 +297,7 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block styles %}
@@ -636,10 +661,10 @@
     }
 
     .share-buttons {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        display: flex;
         gap: 10px;
-        margin-bottom: 20px;
+        margin-top: 15%;
+        margin-left: 35%;
     }
 
     .share-buttons .btn {
@@ -802,6 +827,153 @@
 
         .review-item {
             padding: 15px;
+        }
+    }
+
+    /* Share Modal Styles */
+    #shareModal .modal-content {
+        background: #1a1a1a;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 8px;
+    }
+
+    #shareModal .modal-header {
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding: 1rem 1.5rem;
+    }
+
+    #shareModal .modal-title {
+        color: #fff;
+        font-size: 1.2rem;
+    }
+
+    #shareModal .modal-title i {
+        margin-right: 8px;
+        color: #ffa502;
+    }
+
+    #shareModal .close {
+        color: #fff;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    #shareModal .close:hover {
+        opacity: 1;
+    }
+
+    .share-preview {
+        display: flex;
+        align-items: flex-start;
+        background: rgba(255,255,255,0.05);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .share-thumbnail {
+        width: 100px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 15px;
+    }
+
+    .share-info {
+        flex: 1;
+    }
+
+    .share-info h6 {
+        color: #fff;
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+    }
+
+    .share-info p {
+        color: #aaa;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 14px;
+        transition: transform 0.2s, opacity 0.2s;
+        text-decoration: none;
+    }
+
+    .btn-icon:hover {
+        transform: translateY(-2px);
+        opacity: 0.9;
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-facebook {
+        background: #1877f2;
+    }
+
+    .btn-twitter {
+        background: #1da1f2;
+    }
+
+    .btn-whatsapp {
+        background: #25d366;
+    }
+
+    .btn-telegram {
+        background: #0088cc;
+    }
+
+    .share-link {
+        background: rgba(255,255,255,0.05);
+        border-radius: 8px;
+        padding: 15px;
+    }
+
+    .share-link .input-group {
+        background: transparent;
+    }
+
+    .share-link .form-control {
+        background: rgba(255,255,255,0.1);
+        border: none;
+        color: #fff;
+        padding: 12px;
+    }
+
+    .share-link .btn-primary {
+        background: #ffa502;
+        border: none;
+        padding: 0 20px;
+        color: #fff !important;
+    }
+
+    .share-link .btn-primary:hover {
+        background: #ff9f00;
+        color: #fff !important;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 576px) {
+        .share-preview {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .share-thumbnail {
+            margin-right: 0;
+            margin-bottom: 15px;
+        }
+
+        .share-buttons {
+            justify-content: center;
         }
     }
 </style>
