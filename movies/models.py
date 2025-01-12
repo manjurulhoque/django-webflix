@@ -103,8 +103,8 @@ class Movie(models.Model):
     actors = models.ManyToManyField(Actor)
     director = models.CharField(max_length=255, blank=True, null=True)
     writer = models.CharField(max_length=255, blank=True, null=True)
-    thumbnail = models.ImageField(upload_to=thumbnail_directory_path)
-    cover = models.ImageField(upload_to=cover_directory_path)
+    thumbnail = models.URLField(blank=True, null=True)
+    cover = models.URLField(blank=True, null=True)
     trailer_url = models.URLField(blank=True, null=True)
     is_free = models.BooleanField(default=False)
     status = models.CharField(

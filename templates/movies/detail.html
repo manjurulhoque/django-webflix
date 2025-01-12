@@ -1,115 +1,819 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load humanize %}
+{% load custom_filters %}
 {% block content %}
+<div class="movie-detail-container">
+    <!-- Movie Header Section -->
+    <div class="movie-header-bg" style="background-image: url('{{ movie.cover }}');">
+        <div class="movie-header-overlay">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="movie-poster">
+                            <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="movie-header-content">
+                            {% comment %} <h1 class="movie-title">{{ movie.title }}</h1> {% endcomment %}
+                            {% if movie.original_title %}
+                                <h2 class="movie-original-title">{{ movie.original_title }}</h2>
+                            {% endif %}
+                            
+                            <div class="movie-meta">
+                                <span class="year">{{ movie.year }}</span>
+                                <span class="duration">{{ movie.duration }} min</span>
+                                <span class="classification">{{ movie.classification }}+</span>
+                                {% for genre in movie.genres.all %}
+                                    <a href="" class="genre-tag">{{ genre.title }}</a>
+                                {% endfor %}
+                            </div>
 
-    <div class="row content-section">
-        <div class="col-md-12">
-            <div class="movie-header-bg" style=" background-image: url('{{ movie.cover.url }}');">
-                <div class="movie-header">
-                    <div class="movie-title">{{ movie.title }}</div>
-                    <div class="movie-infos">{{ movie.year }} • {{ movie.classification }} • {{ movie.duration }} {% for genre in movie.genres.all %} • <a href="#">{{ genre.title }}</a>{% endfor %}
-                    </div>
-                    <div class="header-buttons">
-                        {% if user.is_authenticated %}
-                            <button class="btn-fav" alt="{{ movie.id }}"><i class="far fa-heart"></i></button>
-                        {% else %}
-                            <button class="open-login"><i class="far fa-heart"></i></button>
-                        {% endif %}
-                        <button id="share-btn">
-                            <i class="fa fa-share "></i>SHARE
-                        </button>
-                    </div>
-                    <div class="header-ratings">
-                        {{ movie.rating }}/5 • {{ movie.imdb }} / 10 <span class="imdb">IMDb</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-12">
-            <div class="dropdown">
-                {% if movie.is_free %}
-                    <a href="#" class="btn play-btn"><span class="fa fa-play"></span> Play Movie</a>
-                {% elif movie.is_free and user_membership.membership.membership_type == 'Free' %}
-                    <a href="#" class="btn play-btn"><span class="fa fa-play"></span> Play Movie</a>
-                {% elif not movie.is_free and user_membership.membership.membership_type == 'Monthly' or user_membership.membership.membership_type == 'Daily' %}
-                    <a href="#" class="btn play-btn"><span class="fa fa-play"></span> Play Movie</a>
-                {% else %}
-                    <a href="{% url 'core:subscriptions' %}" class="btn play-btn"><i class="fas fa-star"></i> Subscribe to Play!</a>
-                {% endif %}
-                {% if movie.trailer != null %}
-                    <button id="trailer-btn" class="btn play-btn"><span class="fa fa-bullhorn"></span> Watch Trailer</button>
-                {% endif %}
-                <button id="subtitles-btn" class="btn play-btn movie-subtitles" data-id={{ movie.id }} data-title="{{ movie.title }}"><span class="fa fa-cc"></span> Subtitles</button>
-                <button id="downloads-btn" class="btn play-btn movie-downloads" data-id={{ movie.id }} data-title="{{ movie.title }}"><span class="fas fa-download"></span> Download</button>
-                <a class="btn play-btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="fa fa-star"></span> Rate Movie
-                </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                    <div class="comment-item  review-write">
-                        <div class='alert alert-success success-review' role='alert'>
-                            <i class='fas fa-comment-alt'></i> Your Review has been added successfully!
+                            <div class="movie-ratings">
+                                <div class="rating-box">
+                                    <span class="rating-score">{{ movie.rating_avg|floatformat:1 }}</span>
+                                    <div class="rating-stars">
+                                        {% for i in "12345" %}
+                                            <i class="fas fa-star {% if forloop.counter <= movie.rating_avg %}filled{% endif %}"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <span class="rating-count">({{ movie.rating_count|intcomma }} ratings)</span>
+                                </div>
+                                <div class="imdb-rating">
+                                    <span class="imdb-label">IMDb</span>
+                                    <span class="imdb-score">{{ movie.imdb }}/10</span>
+                                </div>
+                            </div>
+
+                            <div class="movie-actions">
+                                {% if user.is_authenticated %}
+                                    {% if movie.is_free or user_membership.membership.membership_type != 'Free' %}
+                                        <button class="btn btn-primary btn-play">
+                                            <i class="fas fa-play"></i> Play Movie
+                                        </button>
+                                    {% else %}
+                                        <a href="{% url 'memberships:plans' %}" class="btn btn-subscribe">
+                                            <i class="fas fa-crown"></i> Subscribe to Watch
+                                        </a>
+                                    {% endif %}
+                                {% else %}
+                                    <button class="btn btn-primary open-login">
+                                        <i class="fas fa-sign-in-alt"></i> Sign in to Watch
+                                    </button>
+                                {% endif %}
+
+                                {% if movie.trailer_url %}
+                                    <button class="btn btn-secondary btn-trailer" data-trailer="{{ movie.trailer_url }}">
+                                        <i class="fas fa-film"></i> Watch Trailer
+                                    </button>
+                                {% endif %}
+
+                                <div class="action-buttons">
+                                    {% if user.is_authenticated %}
+                                        <button class="btn btn-icon btn-favorite" data-movie-id="{{ movie.id }}">
+                                            <i class="{% if is_favorite %}fas{% else %}far{% endif %} fa-heart"></i>
+                                        </button>
+                                    {% endif %}
+                                    <button class="btn btn-icon btn-share">
+                                        <i class="fa fa-share-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class='alert alert-danger error-review' role='alert'>
-                            <i class='fas fa-comment-alt'></i> Your Review could not be submitted
-                        </div>
-                        <div class="rate" id="rate-input" alt="{{ movie.id }}">
-                            <input type="radio" id="star5" name="rate" value="5"/>
-                            <label for="star5" title="text">5 stars</label>
-                            <input type="radio" id="star4" name="rate" value="4"/>
-                            <label for="star4" title="text">4 stars</label>
-                            <input type="radio" id="star3" name="rate" value="3"/>
-                            <label for="star3" title="text">3 stars</label>
-                            <input type="radio" id="star2" name="rate" value="2"/>
-                            <label for="star2" title="text">2 stars</label>
-                            <input type="radio" checked="true" id="star1" name="rate" value="1"/>
-                            <label for="star1" title="text">1 star</label>
-                        </div>
-                        <textarea class="input-review" placeholder="Write you review here"></textarea>
-                        {% if user.is_authenticated %}
-                            <button alt="{{ movie.id }}" type="button" class="btn btn-primary  submit-review btn-block"><i class="fas fa-paper-plane"></i> Submit Review</button>
-                            <button alt="{{ movie.id }}" class="btn btn-primary  loading-review btn-block"><i class="fas fa-circle-notch fa-spin"></i> Review Inserting</button>
-                        {% else %}
-                            <button class="btn btn-primary btn-block open-login"><i class="fas fa-check"></i> Login to leave a review</button>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-12 padding-top-20">
-            <div class="movie-section-title">Overview</div>
-        </div>
-        <div class="col-md-12">
-            <p>
-                {{ movie.description }}
-            </p>
-        </div>
-        {% if movie.roles|length != 0 %}
-            <div class="col-md-12 padding-top-20">
-                <div class="movie-section-title">Cast</div>
-            </div>
-            <div class="flix-carousel">
-                <button class="prev_btn"><i class="fa fa-chevron-left"></i></button>
-                <button class="next_btn"><i class="fa fa-chevron-right"></i></button>
-                <div class="flix-scroll-x">
-                    No cast yet added
-                </div>
-            </div>
-        {% endif %}
-    </div>
-    <div class="background-close  serie-dialog">
-        <div class="login-box ">
-            <div class="notif-head">
-                <span class="notif-close"><i class="fa fa-times" aria-hidden="true"></i></span>
-                <span class="notif-title"><i class="fa fa-fw fa-lock"></i>  </span>
-            </div>
-            <div class="notif-body">
-                <div class="carda__body">
-                    <div class="box-content">
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Movie Content Section -->
+    <div class="container movie-content">
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Overview -->
+                <section class="content-section">
+                    <h3 class="section-title">Overview</h3>
+                    <p class="movie-description">{{ movie.description }}</p>
+                </section>
+
+                <!-- Cast & Crew -->
+                <section class="content-section">
+                    <h3 class="section-title">Cast & Crew</h3>
+                    <div class="crew-info">
+                        {% if movie.director %}
+                            <div class="crew-item">
+                                <span class="crew-role">Director:</span>
+                                <span class="crew-name">{{ movie.director }}</span>
+                            </div>
+                        {% endif %}
+                        {% if movie.writer %}
+                            <div class="crew-item">
+                                <span class="crew-role">Writer:</span>
+                                <span class="crew-name">{{ movie.writer }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if movie.actors.exists %}
+                        <div class="cast-list">
+                            {% for actor in movie.actors.all %}
+                                <div class="cast-item">
+                                    <img src="{{ actor.photo.url }}" alt="{{ actor.name }}" class="cast-photo">
+                                    <div class="cast-info">
+                                        <span class="cast-name">{{ actor.name }}</span>
+                                        <span class="cast-role">{{ actor.role }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </section>
+
+                <!-- Reviews Section -->
+                <section class="content-section" id="reviews">
+                    <h3 class="section-title">
+                        Reviews 
+                        <span class="review-count">({{ movie.reviews.count }})</span>
+                    </h3>
+                    
+                    {% if user.is_authenticated %}
+                        <div class="review-form">
+                            <div class="rating-input">
+                                <div class="rate">
+                                    {% for i in "54321" %}
+                                        <input type="radio" id="star{{ i }}" name="rate" value="{{ i }}"/>
+                                        <label for="star{{ i }}" title="{{ i }} stars"></label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <textarea class="form-control review-text" placeholder="Write your review..."></textarea>
+                            <button class="btn btn-primary submit-review" data-movie-id="{{ movie.id }}">
+                                Submit Review
+                            </button>
+                        </div>
+                    {% endif %}
+
+                    <div class="reviews-list">
+                        {% for review in movie.reviews.all %}
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <img src="https://www.gravatar.com/avatar/{{ review.user.email|md5 }}?s=50&d=mp" 
+                                         alt="{{ review.user.get_full_name }}" 
+                                         class="reviewer-avatar">
+                                    <div class="reviewer-info">
+                                        <span class="reviewer-name">{{ review.user.get_full_name }}</span>
+                                        <div class="review-rating">
+                                            {% for i in "12345" %}
+                                                <i class="fas fa-star {% if forloop.counter <= review.rating %}filled{% endif %}"></i>
+                                            {% endfor %}
+                                        </div>
+                                        <span class="review-date">{{ review.created|date:"M d, Y" }}</span>
+                                    </div>
+                                </div>
+                                <p class="review-comment">{{ review.comment }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-md-4">
+                <!-- Movie Details -->
+                <div class="sidebar-section movie-details">
+                    <h4 class="sidebar-title">Movie Details</h4>
+                    <ul class="details-list">
+                        <li><span>Release Date:</span> {{ movie.release_date|date:"F d, Y" }}</li>
+                        <li><span>Country:</span> {{ movie.country }}</li>
+                        <li><span>Language:</span> {{ movie.language }}</li>
+                        {% if movie.production_company %}
+                            <li><span>Production:</span> {{ movie.production_company }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- Available Qualities -->
+                {% if movie.videos.exists %}
+                    <div class="sidebar-section available-qualities">
+                        <h4 class="sidebar-title">Available Qualities</h4>
+                        <div class="quality-list">
+                            {% for video in movie.videos.all %}
+                                <div class="quality-item">
+                                    <span class="quality-label">{{ video.quality }}</span>
+                                    <span class="quality-size">{{ video.size|floatformat:1 }} GB</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Similar Movies -->
+                {% if similar_movies %}
+                    <div class="sidebar-section similar-movies">
+                        <h4 class="sidebar-title">Similar Movies</h4>
+                        <div class="similar-movies-list">
+                            {% for movie in similar_movies %}
+                                <a href="{% url 'movies:detail' movie.slug %}" class="similar-movie-item">
+                                    <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}">
+                                    <div class="similar-movie-info">
+                                        <h5>{{ movie.title }}</h5>
+                                        <span class="year">{{ movie.year }}</span>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<div class="modal fade" id="trailerModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe class="embed-responsive-item" src="" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="shareModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Share this Movie</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="share-buttons">
+                    <a href="#" class="btn btn-facebook" target="_blank">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </a>
+                    <a href="#" class="btn btn-twitter" target="_blank">
+                        <i class="fab fa-twitter"></i> Twitter
+                    </a>
+                    <a href="#" class="btn btn-whatsapp" target="_blank">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </a>
+                    <div class="input-group mt-3">
+                        <input type="text" class="form-control" value="{{ request.build_absolute_uri }}" readonly>
+                        <div class="input-group-append">
+                            <button class="btn btn-primary copy-link">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .movie-detail-container {
+        background-color: #000;
+        min-height: 100vh;
+        color: #fff;
+    }
+
+    /* Header Section */
+    .movie-header-bg {
+        background-size: cover;
+        background-position: center;
+        height: 600px;
+        position: relative;
+    }
+
+    .movie-header-overlay {
+        background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.9) 100%);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 60px 0;
+    }
+
+    .movie-poster {
+        margin-top: 20px;
+    }
+
+    .movie-poster img {
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    .movie-header-content {
+        padding: 20px 0;
+        position: absolute;
+        bottom: 40px;
+        width: 100%;
+        max-width: 800px;
+    }
+
+    .movie-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        line-height: 1.2;
+    }
+
+    .movie-original-title {
+        font-size: 1.4rem;
+        color: #ddd;
+        margin-bottom: 20px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        font-style: italic;
+    }
+
+    /* Meta Information */
+    .movie-meta {
+        margin-bottom: 20px;
+    }
+
+    .movie-meta span, .movie-meta a {
+        display: inline-block;
+        margin-right: 15px;
+        color: #fff;
+        background: rgba(255,255,255,0.1);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+
+    .genre-tag {
+        text-decoration: none;
+        transition: background 0.3s;
+    }
+
+    .genre-tag:hover {
+        background: rgba(255,255,255,0.2);
+        color: #fff;
+        text-decoration: none;
+    }
+
+    /* Ratings */
+    .movie-ratings {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .rating-box {
+        margin-right: 30px;
+    }
+
+    .rating-score {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #ffd700;
+    }
+
+    .rating-stars {
+        color: #ffd700;
+        margin: 5px 0;
+    }
+
+    .rating-stars .fas.filled {
+        color: #ffd700;
+    }
+
+    .rating-stars .fas:not(.filled) {
+        color: #444;
+    }
+
+    .rating-count {
+        color: #aaa;
+        font-size: 0.9rem;
+    }
+
+    .imdb-rating {
+        background: #f5c518;
+        padding: 5px 10px;
+        border-radius: 4px;
+        color: #000;
+        font-weight: bold;
+    }
+
+    /* Action Buttons */
+    .movie-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .btn-play, .btn-subscribe {
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        border-radius: 30px;
+        border: none;
+    }
+
+    .btn-play {
+        background: #e50914;
+        color: #fff;
+    }
+
+    .btn-play:hover {
+        background: #f40612;
+        color: #fff;
+    }
+
+    .btn-subscribe {
+        background: #ffd700;
+        color: #000;
+    }
+
+    .btn-trailer {
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+        border: none;
+    }
+
+    .btn-trailer:hover {
+        background: rgba(255,255,255,0.2);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.1);
+        border: none;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-icon:hover {
+        background: rgba(255,255,255,0.2);
+    }
+
+    /* Content Section */
+    .movie-content {
+        padding: 40px 0;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: #fff;
+    }
+
+    .movie-description {
+        color: #aaa;
+        line-height: 1.6;
+        font-size: 1.1rem;
+    }
+
+    /* Crew Info */
+    .crew-info {
+        margin-bottom: 30px;
+    }
+
+    .crew-item {
+        margin-bottom: 10px;
+    }
+
+    .crew-role {
+        color: #aaa;
+        margin-right: 10px;
+    }
+
+    .crew-name {
+        color: #fff;
+    }
+
+    /* Cast List */
+    .cast-list {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        padding: 20px 0;
+    }
+
+    .cast-item {
+        min-width: 140px;
+        text-align: center;
+    }
+
+    .cast-photo {
+        width: 120px;
+        height: 120px;
+        border-radius: 60px;
+        margin-bottom: 10px;
+        object-fit: cover;
+    }
+
+    .cast-name {
+        color: #fff;
+        font-weight: 500;
+        display: block;
+    }
+
+    .cast-role {
+        color: #aaa;
+        font-size: 0.9rem;
+    }
+
+    /* Sidebar Sections */
+    .sidebar-section {
+        background: rgba(255,255,255,0.05);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .sidebar-title {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        color: #fff;
+    }
+
+    .details-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .details-list li {
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .details-list li span:first-child {
+        color: #aaa;
+    }
+
+    /* Quality List */
+    .quality-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .quality-item {
+        background: rgba(255,255,255,0.1);
+        padding: 8px 15px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .quality-label {
+        color: #fff;
+    }
+
+    .quality-size {
+        color: #aaa;
+        font-size: 0.9rem;
+    }
+
+    /* Similar Movies */
+    .similar-movies-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .similar-movie-item {
+        text-decoration: none;
+        color: #fff;
+        transition: transform 0.3s;
+    }
+
+    .similar-movie-item:hover {
+        transform: scale(1.05);
+        text-decoration: none;
+        color: #fff;
+    }
+
+    .similar-movie-item img {
+        width: 100%;
+        border-radius: 4px;
+        margin-bottom: 8px;
+    }
+
+    .similar-movie-info h5 {
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+    }
+
+    .similar-movie-info .year {
+        color: #aaa;
+        font-size: 0.8rem;
+    }
+
+    /* Modals */
+    .modal-content {
+        background: #181818;
+        color: #fff;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #333;
+    }
+
+    .modal-header .close {
+        color: #fff;
+    }
+
+    .share-buttons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .share-buttons .btn {
+        padding: 10px;
+    }
+
+    .btn-facebook { background: #1877f2; }
+    .btn-twitter { background: #1da1f2; }
+    .btn-whatsapp { background: #25d366; }
+
+    /* Reviews Section */
+    .review-form {
+        background: rgba(255,255,255,0.05);
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+    .rating-input {
+        margin-bottom: 15px;
+    }
+
+    .rate {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+
+    .rate input {
+        display: none;
+    }
+
+    .rate label {
+        cursor: pointer;
+        width: 30px;
+        font-size: 25px;
+        color: #444;
+        transition: all 0.2s ease;
+    }
+
+    .rate label:before {
+        content: '★';
+    }
+
+    .rate input:checked ~ label,
+    .rate label:hover,
+    .rate label:hover ~ label {
+        color: #ffd700;
+    }
+
+    .review-text {
+        background: rgba(255,255,255,0.1);
+        border: none;
+        color: #fff;
+        min-height: 100px;
+        margin-bottom: 15px;
+    }
+
+    .review-text:focus {
+        background: rgba(255,255,255,0.15);
+        color: #fff;
+        box-shadow: none;
+    }
+
+    .reviews-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .review-item {
+        background: rgba(255,255,255,0.05);
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .review-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .reviewer-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 25px;
+        margin-right: 15px;
+        object-fit: cover;
+        border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .reviewer-info {
+        flex: 1;
+    }
+
+    .reviewer-name {
+        display: block;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 5px;
+    }
+
+    .review-rating {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 5px;
+    }
+
+    .review-rating .fas {
+        font-size: 14px;
+    }
+
+    .review-date {
+        color: #aaa;
+        font-size: 0.9rem;
+    }
+
+    .review-comment {
+        color: #ddd;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .review-count {
+        color: #aaa;
+        font-size: 1rem;
+        font-weight: normal;
+        margin-left: 10px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .movie-header-content {
+            position: relative;
+            bottom: auto;
+            padding: 20px 15px;
+        }
+
+        .movie-title {
+            font-size: 2rem;
+        }
+
+        .movie-original-title {
+            font-size: 1.2rem;
+        }
+
+        .movie-actions {
+            flex-wrap: wrap;
+        }
+
+        .btn-play, .btn-subscribe {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .action-buttons {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .review-item {
+            padding: 15px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add your JavaScript here for handling:
+    // - Trailer modal
+    // - Share functionality
+    // - Review submission
+    // - Favorite toggling
+    // - Copy link functionality
+</script>
 {% endblock %}
