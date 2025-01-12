@@ -1,0 +1,128 @@
+.hero-section {
+    height: 600px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.hero-overlay {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.9) 100%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+.hero-content {
+    max-width: 600px;
+    color: #fff;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.hero-buttons {
+    margin-top: 2rem;
+}
+
+.filters-section {
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 30px;
+}
+
+.movie-section {
+    margin-bottom: 40px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.view-all {
+    color: #ffa502;
+    text-decoration: none;
+}
+
+.movie-slider {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+}
+
+.movie-card {
+    transition: transform 0.3s;
+}
+
+.movie-card:hover {
+    transform: scale(1.05);
+}
+
+.movie-poster {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.movie-poster img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+}
+
+.movie-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+}
+
+.movie-info h3 {
+    color: #fff;
+    font-size: 1rem;
+    margin: 0 0 5px 0;
+}
+
+.movie-meta {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.movie-meta span {
+    margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        height: 400px;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .movie-slider {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+    }
+
+    .movie-poster img {
+        height: 180px;
+    }
+}

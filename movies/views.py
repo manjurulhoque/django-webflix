@@ -4,7 +4,12 @@ from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.db.models import F
 
-from .models import Movie, Favorite, WatchHistory
+from .models import (
+    Movie,
+    MovieStatusChoices,
+    Favorite,
+    WatchHistory
+)
 
 
 class MovieDetailsView(DetailView):
@@ -29,7 +34,7 @@ class MovieDetailsView(DetailView):
         # Get similar movies based on genres
         movie_genres = movie.genres.all()
         similar_movies = Movie.objects.filter(
-            status='published',
+            status=MovieStatusChoices.PUBLISHED,
             genres__in=movie_genres
         ).exclude(
             id=movie.id
@@ -76,7 +81,7 @@ class MovieDetailsView(DetailView):
         slug = self.kwargs.get(self.slug_url_kwarg)
         
         try:
-            obj = queryset.get(slug=slug, status='published')
+            obj = queryset.get(slug=slug, status=MovieStatusChoices.PUBLISHED)
             
             # Increment view count
             if self.request.user.is_authenticated:
@@ -103,6 +108,29 @@ class MovieDetailsView(DetailView):
         queryset = super().get_queryset()
         
         # Only show published movies
-        queryset = queryset.filter(status='published')
+        queryset = queryset.filter(status=MovieStatusChoices.PUBLISHED)
         
+        return queryset
+
+class MovieSearchView(DetailView):
+    model = Movie
+    template_name = "movies/search.html"
+    context_object_name = "movie"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        query = self.request.GET.get('query')
+        context["query"] = query
+        context["results"] = Movie.objects.filter(title__icontains=query, status=MovieStatusChoices.PUBLISHED)
+        return context
+
+    def get_queryset(self):
+        """
+        Return the queryset that will be used to look up the movie.
+        """
+        queryset = super().get_queryset()
+
+        # Only show published movies
+        queryset = queryset.filter(status=MovieStatusChoices.PUBLISHED)
+
         return queryset
