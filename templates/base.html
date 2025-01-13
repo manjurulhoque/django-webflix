@@ -33,10 +33,10 @@
             <div class="nav-bar-container">
                 <nav class="navbar bg-light left-navbar">
                     <ul class="navbar-nav">
-                        <a href="" class="btn btn-subscription">
+                        <a href="{% url 'core:pricing' %}" class="btn btn-subscription">
                             <i class="fas fa-star"></i> Subscribe now !</a>
                         <li class="nav-item">
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="{% url 'core:home' %}">
                                 <i class="fas fa-home"></i>
                                 Home
                             </a>
@@ -51,11 +51,11 @@
                                 <i class="fas fa-desktop"></i> Tv Shows
                             </a>
                         </li>
-                        <li class="nav-item">
+                        {% comment %} <li class="nav-item">
                             <a class="nav-link" href="">
                                 <i class="fas fa-bullseye"></i> Tv Channels
                             </a>
-                        </li>
+                        </li> {% endcomment %}
                         <li class="nav-item">
                             <a class="nav-link" href=""><i class="fas fa-folder"></i> My list
                             </a>
