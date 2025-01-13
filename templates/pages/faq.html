@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">Frequently Asked Questions</h1>
+            
+            <div class="accordion" id="faqAccordion">
+                <!-- Watching Movies -->
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne">
+                                How can I watch movies?
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseOne" class="collapse show" data-parent="#faqAccordion">
+                        <div class="card-body">
+                            You can watch movies by signing up for an account and choosing a subscription plan. Once subscribed, you'll have access to our entire movie library.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subscription -->
+                <div class="card">
+                    <div class="card-header" id="headingTwo">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo">
+                                What subscription plans are available?
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseTwo" class="collapse" data-parent="#faqAccordion">
+                        <div class="card-body">
+                            We offer several subscription plans to meet your needs. Visit our pricing page to see detailed information about each plan.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- More FAQ items... -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.accordion .card {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 10px;
+}
+
+.accordion .card-header {
+    background: rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 0;
+}
+
+.accordion .btn-link {
+    color: #fff;
+    width: 100%;
+    text-align: left;
+    padding: 15px;
+    text-decoration: none;
+}
+
+.accordion .btn-link:hover,
+.accordion .btn-link:focus {
+    color: #ffa502;
+    text-decoration: none;
+}
+
+.accordion .card-body {
+    color: #aaa;
+    padding: 20px;
+}
+</style>
+{% endblock %} 

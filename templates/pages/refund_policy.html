@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">Refund Policy</h1>
+            
+            <div class="policy-content">
+                <section class="mb-5">
+                    <h2>Refund Eligibility</h2>
+                    <p>We offer refunds under the following conditions:</p>
+                    <ul>
+                        <li>Service unavailability</li>
+                        <li>Technical issues</li>
+                        <li>Billing errors</li>
+                    </ul>
+                </section>
+
+                <section class="mb-5">
+                    <h2>How to Request a Refund</h2>
+                    <p>To request a refund:</p>
+                    <ol>
+                        <li>Contact our support team</li>
+                        <li>Provide your order details</li>
+                        <li>Explain the reason for the refund</li>
+                    </ol>
+                </section>
+
+                <!-- More sections... -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.policy-content {
+    color: #aaa;
+}
+
+.policy-content h2 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.policy-content ul,
+.policy-content ol {
+    padding-left: 20px;
+}
+
+.policy-content li {
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %} 

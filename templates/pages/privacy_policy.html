@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">Privacy Policy</h1>
+            
+            <div class="policy-content">
+                <section class="mb-5">
+                    <h2>Information We Collect</h2>
+                    <p>We collect information that you provide directly to us, including:</p>
+                    <ul>
+                        <li>Account information</li>
+                        <li>Payment information</li>
+                        <li>Viewing history</li>
+                        <li>Device information</li>
+                    </ul>
+                </section>
+
+                <section class="mb-5">
+                    <h2>How We Use Your Information</h2>
+                    <p>We use the information we collect to:</p>
+                    <ul>
+                        <li>Provide and maintain our services</li>
+                        <li>Process your payments</li>
+                        <li>Improve our services</li>
+                        <li>Communicate with you</li>
+                    </ul>
+                </section>
+
+                <!-- More sections... -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.policy-content {
+    color: #aaa;
+}
+
+.policy-content h2 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.policy-content ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.policy-content li {
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %} 

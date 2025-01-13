@@ -13,3 +13,12 @@ def home(request):
         'sort': request.GET.get('sort', 'newest')
     }
     return render(request, "index.html", context)
+
+def faq(request):
+    return render(request, "pages/faq.html")
+
+def privacy_policy(request):
+    return render(request, "pages/privacy_policy.html")
+
+def refund_policy(request):
+    return render(request, "pages/refund_policy.html")
