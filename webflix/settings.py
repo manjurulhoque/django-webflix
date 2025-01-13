@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "genres",
     "movies",
     "djstripe",
+    "series",
 ]
 
 MIDDLEWARE = [
