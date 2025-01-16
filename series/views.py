@@ -1,6 +1,10 @@
 from django.shortcuts import render
 from django.views.generic import DetailView, ListView
-from .models import Series, SeriesStatusChoices, Genre
+from .models import Series, SeriesStatusChoices, Genre, SeriesFavorite, SeriesWatchList, SeriesWatchHistory
+from django.http import JsonResponse
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
 
 
 class SeriesDetailsView(DetailView):
@@ -11,6 +15,17 @@ class SeriesDetailsView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         series = self.get_object()
+        user = self.request.user
+
+        if user.is_authenticated:
+            context.update({
+                'is_favorite': SeriesFavorite.objects.filter(user=user, series=series).exists(),
+                'in_watch_list': SeriesWatchList.objects.filter(user=user, series=series).exists(),
+                'watch_history': SeriesWatchHistory.objects.filter(
+                    user=user,
+                    series=series
+                ).select_related('episode')
+            })
 
         # Get similar series based on genres
         series_genres = series.genres.all()
@@ -65,3 +80,96 @@ class SeriesListView(ListView):
             'genres': Genre.objects.filter(is_active=True),
         })
         return context
+
+
+class ToggleFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, slug):
+        series = get_object_or_404(Series, slug=slug)
+        favorite, created = SeriesFavorite.objects.get_or_create(
+            user=request.user,
+            series=series
+        )
+        
+        if not created:
+            favorite.delete()
+            is_favorite = False
+        else:
+            is_favorite = True
+            
+        return JsonResponse({
+            'status': 'success',
+            'is_favorite': is_favorite
+        })
+
+
+class ToggleWatchlistView(LoginRequiredMixin, View):
+    def post(self, request, slug):
+        series = get_object_or_404(Series, slug=slug)
+        watchlist, created = SeriesWatchList.objects.get_or_create(
+            user=request.user,
+            series=series
+        )
+        
+        if not created:
+            watchlist.delete()
+            in_watchlist = False
+        else:
+            in_watchlist = True
+            
+        return JsonResponse({
+            'status': 'success',
+            'in_watchlist': in_watchlist
+        })
+
+
+class UpdateWatchHistoryView(LoginRequiredMixin, View):
+    def post(self, request, slug):
+        series = get_object_or_404(Series, slug=slug)
+        episode_id = request.POST.get('episode_id')
+        watched_duration = request.POST.get('duration', 0)
+        completed = request.POST.get('completed', False)
+
+        history, _ = SeriesWatchHistory.objects.get_or_create(
+            user=request.user,
+            series=series,
+            episode_id=episode_id
+        )
+        
+        history.watched_duration = watched_duration
+        history.completed = completed
+        history.save()
+        
+        return JsonResponse({'status': 'success'})
+
+
+class UserFavoritesView(LoginRequiredMixin, ListView):
+    template_name = 'series/user/favorites.html'
+    context_object_name = 'favorites'
+    paginate_by = 24
+
+    def get_queryset(self):
+        return SeriesFavorite.objects.filter(
+            user=self.request.user
+        ).select_related('series').order_by('-created')
+
+
+class UserWatchlistView(LoginRequiredMixin, ListView):
+    template_name = 'series/user/watchlist.html'
+    context_object_name = 'watchlist'
+    paginate_by = 24
+
+    def get_queryset(self):
+        return SeriesWatchList.objects.filter(
+            user=self.request.user
+        ).select_related('series').order_by('-created')
+
+
+class UserWatchHistoryView(LoginRequiredMixin, ListView):
+    template_name = 'series/user/history.html'
+    context_object_name = 'history'
+    paginate_by = 24
+
+    def get_queryset(self):
+        return SeriesWatchHistory.objects.filter(
+            user=self.request.user
+        ).select_related('series', 'episode').order_by('-updated')

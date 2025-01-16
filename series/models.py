@@ -194,3 +194,43 @@ def generate_file_name(length=30):
     """Generate a random filename"""
     letters = string.ascii_letters + string.digits
     return "".join(choice(letters) for _ in range(length))
+
+
+class SeriesFavorite(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    series = models.ForeignKey('Series', on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'series')
+        ordering = ['-created']
+
+
+class SeriesWatchList(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    series = models.ForeignKey('Series', on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'series')
+        ordering = ['-created']
+
+
+class SeriesWatchHistory(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    series = models.ForeignKey('Series', on_delete=models.CASCADE)
+    episode = models.ForeignKey('Episode', on_delete=models.CASCADE)
+    watched_duration = models.PositiveIntegerField(default=0)
+    completed = models.BooleanField(default=False)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'series', 'episode')
+        ordering = ['-updated']
+
+    @property
+    def progress(self):
+        if self.episode.duration:
+            return int((self.watched_duration / self.episode.duration) * 100)
+        return 0

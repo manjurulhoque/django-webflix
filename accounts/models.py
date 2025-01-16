@@ -13,6 +13,7 @@ class User(AbstractUser):
             "unique": "A user with that email already exists.",
         },
     )
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

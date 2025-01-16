@@ -90,10 +90,10 @@
             <div class="xs-header">
                 <button class="btn btn-primary float-left menu-left-btn"><i class="fas fa-bars"></i></button>
                 <img src="{% static "img/logo.png" %}" alt="logo">
-                <div class="btn-group  float-right ">
+                <div class="btn-group float-right ">
                     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false"><span
-                            class="for-desktop"> username </span>
+                            class="for-desktop"> {{ request.user.get_full_name }} </span>
                         <img src="" alt="">
                     </button>
                     <div class="dropdown-menu dropdown-login">
@@ -108,6 +108,15 @@
                         </a>
                         <a class="dropdown-item" href="#">
                             <i class="fas fa-user-lock"></i> Change password
+                        </a>
+                        <a class="dropdown-item" href="{% url 'series:my_favorites' %}">
+                            <i class="fas fa-heart"></i> My Favorites
+                        </a>
+                        <a class="dropdown-item" href="{% url 'series:my_watchlist' %}">
+                            <i class="fas fa-bookmark"></i> My Watchlist
+                        </a>
+                        <a class="dropdown-item" href="{% url 'series:my_history' %}">
+                            <i class="fas fa-history"></i> Watch History
                         </a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">
@@ -138,9 +147,8 @@
                 <div class="col-sm-3 col-md-3 account-action for-desktop">
                     {% if request.user.is_authenticated %}
                         <div class="btn-group float-right ">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false"><span
-                                    class="for-desktop"> {{ request.user.get_full_name }} </span>
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="for-desktop"> {{ request.user.get_full_name }} </span>
                                 <img src="" alt="">
                             </button>
                             <div class="dropdown-menu dropdown-login">
@@ -152,6 +160,15 @@
                                 </a>
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-star"></i>Subscriptions
+                                </a>
+                                <a class="dropdown-item" href="{% url 'series:my_favorites' %}">
+                                    <i class="fas fa-heart"></i> My Favorites
+                                </a>
+                                <a class="dropdown-item" href="{% url 'series:my_watchlist' %}">
+                                    <i class="fas fa-bookmark"></i> My Watchlist
+                                </a>
+                                <a class="dropdown-item" href="{% url 'series:my_history' %}">
+                                    <i class="fas fa-history"></i> Watch History
                                 </a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{% url 'accounts:logout' %}">

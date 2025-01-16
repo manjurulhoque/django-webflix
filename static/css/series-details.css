@@ -227,3 +227,98 @@
         justify-content: flex-end;
     }
 }
+
+/* Action Buttons */
+.series-actions {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.action-btn {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.action-btn.active {
+    background: #ffa502;
+}
+
+/* Progress Indicators */
+.episode-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.2);
+}
+
+.progress-bar {
+    height: 100%;
+    background: #ffa502;
+    transition: width 0.3s;
+}
+
+.episode-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.8);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.status-watching {
+    color: #ffa502;
+}
+
+.status-completed {
+    color: #4CAF50;
+}
+
+/* Watch History */
+.watch-history {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+}
+
+.history-title {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-info {
+    flex-grow: 1;
+}
+
+.history-meta {
+    font-size: 0.9rem;
+    color: #888;
+}

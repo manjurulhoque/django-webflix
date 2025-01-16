@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load series_tags %}
 
 {% block styles %}
     <link href="{% static 'css/series-details.css' %}" rel="stylesheet">
@@ -35,6 +36,18 @@
                                     <i class="fas fa-globe"></i> {{ series.language }}
                                 </span>
                             </div>
+                            {% if user.is_authenticated %}
+                                <div class="series-actions">
+                                    <button class="action-btn {% if is_favorite %}active{% endif %}" id="favoriteBtn" 
+                                            data-series="{{ series.slug }}">
+                                        <i class="fas fa-heart"></i> Favorite
+                                    </button>
+                                    <button class="action-btn {% if in_watch_list %}active{% endif %}" id="watchlistBtn"
+                                            data-series="{{ series.slug }}">
+                                        <i class="fas fa-bookmark"></i> Watchlist
+                                    </button>
+                                </div>
+                            {% endif %}
                             <p class="description">{{ series.description }}</p>
                             <div class="hero-buttons">
                                 {% if series.seasons.exists %}
@@ -104,6 +117,22 @@
                                                     <i class="fas fa-play"></i> Watch
                                                 </a>
                                             </div>
+                                            {% if user.is_authenticated %}
+                                                {% with episode_history=watch_history|filter_by_episode:episode.id %}
+                                                <div class="episode-progress">
+                                                    <div class="progress-bar" style="width: {{ episode_history.progress }}%"></div>
+                                                </div>
+                                                {% if episode_history %}
+                                                    <div class="episode-status {% if episode_history.completed %}status-completed{% else %}status-watching{% endif %}">
+                                                        {% if episode_history.completed %}
+                                                            <i class="fas fa-check"></i> Completed
+                                                        {% else %}
+                                                            <i class="fas fa-clock"></i> {{ episode_history.progress }}%
+                                                        {% endif %}
+                                                    </div>
+                                                {% endif %}
+                                                {% endwith %}
+                                            {% endif %}
                                         </div>
                                     {% endfor %}
                                 </div>
@@ -127,4 +156,8 @@
         {% endif %}
     </div>
 </div>
-{% endblock %} 
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/series-details.js' %}"></script>
+{% endblock %}
