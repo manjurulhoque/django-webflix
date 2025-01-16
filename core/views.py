@@ -1,11 +1,14 @@
 from django.shortcuts import render
 from movies.models import Movie
+from series.models import Series
 from genres.models import Genre
 
 
 def home(request):
     context = {
         "genres": Genre.objects.filter(is_active=True),
+        
+        # Movies
         "featured_movie": Movie.objects.filter(
             featured=True, status="published"
         ).last(),
@@ -18,9 +21,27 @@ def home(request):
         "top_rated_movies": Movie.objects.filter(status="published").order_by(
             "-rating_avg"
         )[:12],
+        
+        # Series
+        "featured_series": Series.objects.filter(
+            featured=True, status="published"
+        ).last(),
+        "trending_series": Series.objects.filter(status="published").order_by("-views")[
+            :12
+        ],
+        "latest_series": Series.objects.filter(status="published").order_by("-created")[
+            :12
+        ],
+        "top_rated_series": Series.objects.filter(status="published").order_by(
+            "-imdb"
+        )[:12],
+        
+        # Filters
         "selected_genre": request.GET.get("genre"),
         "sort": request.GET.get("sort", "newest"),
+        "content_type": request.GET.get("type", "all"),  # all, movies, series
     }
+
     return render(request, "index.html", context)
 
 

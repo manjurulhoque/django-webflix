@@ -1,0 +1,15 @@
+<div class="movie-card">
+    <a href="{% url 'series:details' series.slug %}">
+        <div class="movie-poster">
+            <img src="{{ series.thumbnail }}" alt="{{ series.title }}">
+            <div class="movie-info">
+                <h3>{{ series.title }}</h3>
+                <div class="movie-meta">
+                    <span class="year">{{ series.year }}</span>
+                    <span class="seasons">{{ series.total_seasons }} Season{{ series.total_seasons|pluralize }}</span>
+                    <span class="rating"><i class="fas fa-star"></i> {{ series.imdb }}</span>
+                </div>
+            </div>
+        </div>
+    </a>
+</div> 

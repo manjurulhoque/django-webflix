@@ -6,51 +6,73 @@
 {% endblock %}
 
 {% block content %}
-    <!-- Hero Section with Featured Movie -->
-    {% if featured_movie %}
-    <div class="hero-section" style="background-image: url('{{ featured_movie.cover }}')">
-        <div class="hero-overlay">
-            <div class="container">
-                <div class="hero-content">
-                    <h1>{{ featured_movie.title }}</h1>
-                    <p>{{ featured_movie.description|truncatechars:200 }}</p>
-                    <div class="hero-buttons">
-                        <a href="{% url 'movies:details' featured_movie.slug %}" class="btn btn-primary btn-lg">
-                            <i class="fas fa-play"></i> Watch Now
-                        </a>
-                        {% if featured_movie.trailer_url %}
-                        <a href="{{ featured_movie.trailer_url }}" class="btn btn-secondary btn-lg">
-                            <i class="fas fa-film"></i> Watch Trailer
-                        </a>
-                        {% endif %}
+    <!-- Hero Section with Featured Content -->
+    {% if content_type != 'series' and featured_movie %}
+        <div class="hero-section" style="background-image: url('{{ featured_movie.cover }}')">
+            <div class="hero-overlay">
+                <div class="container">
+                    <div class="hero-content">
+                        <span class="content-type">Movie</span>
+                        <h1>{{ featured_movie.title }}</h1>
+                        <p>{{ featured_movie.description|truncatechars:200 }}</p>
+                        <div class="hero-buttons">
+                            <a href="{% url 'movies:details' featured_movie.slug %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-play"></i> Watch Now
+                            </a>
+                            {% if featured_movie.trailer_url %}
+                            <a href="{{ featured_movie.trailer_url }}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-film"></i> Watch Trailer
+                            </a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    {% elif content_type != 'movies' and featured_series %}
+        <div class="hero-section" style="background-image: url('{{ featured_series.cover }}')">
+            <div class="hero-overlay">
+                <div class="container">
+                    <div class="hero-content">
+                        <span class="content-type">TV Series</span>
+                        <h1>{{ featured_series.title }}</h1>
+                        <p>{{ featured_series.description|truncatechars:200 }}</p>
+                        <div class="hero-buttons">
+                            <a href="{% url 'series:details' featured_series.slug %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-play"></i> Watch Now
+                            </a>
+                            {% if featured_series.trailer_url %}
+                            <a href="{{ featured_series.trailer_url }}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-film"></i> Watch Trailer
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% endif %}
 
     <!-- Filters Section -->
     <div class="container">
         <div class="filters-section">
             <div class="row align-items-center">
-                <div class="col-md-6">
-                    <div class="genre-filter">
-                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            All Genres
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                            <a class="dropdown-item active" href="?genre=all">All Genres</a>
-                            {% for genre in genres %}
-                                <a class="dropdown-item {% if selected_genre == genre.slug %}active{% endif %}" 
-                                   href="?genre={{ genre.slug }}">{{ genre.title }}</a>
-                            {% endfor %}
-                        </div>
+                <div class="col-md-4">
+                    <div class="content-type-filter">
+                        <a href="?type=all" class="btn btn-secondary {% if content_type == 'all' %}active{% endif %}">
+                            All
+                        </a>
+                        <a href="?type=movies" class="btn btn-secondary {% if content_type == 'movies' %}active{% endif %}">
+                            Movies
+                        </a>
+                        <a href="?type=series" class="btn btn-secondary {% if content_type == 'series' %}active{% endif %}">
+                            TV Series
+                        </a>
                     </div>
                 </div>
+                
                 <div class="col-md-6">
-                    <div class="sort-options">
+                    <div class="sort-options float-right">
                         <a href="?sort=newest" class="btn btn-secondary {% if sort == 'newest' %}active{% endif %}">
                             <i class="far fa-clock"></i><span class="d-none d-md-inline"> Newest</span>
                         </a>
@@ -65,85 +87,104 @@
                         </a>
                     </div>
                 </div>
+                <div class="col-md-2">
+                    <div class="genre-filter float-right">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            All Genres
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                            <a class="dropdown-item active" href="?genre=all">All Genres</a>
+                            {% for genre in genres %}
+                                <a class="dropdown-item {% if selected_genre == genre.slug %}active{% endif %}" 
+                                   href="?genre={{ genre.slug }}">{{ genre.title }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Trending Section -->
-        <section class="movie-section">
-            <div class="section-header">
-                <h2>Trending Now</h2>
-                <a href="" class="view-all">View All</a>
-            </div>
-            <div class="movie-slider">
-                {% for movie in trending_movies %}
-                    <div class="movie-card">
-                        <a href="{% url 'movies:details' movie.slug %}">
-                            <div class="movie-poster">
-                                <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}">
-                                <div class="movie-info">
-                                    <h3>{{ movie.title }}</h3>
-                                    <div class="movie-meta">
-                                        <span class="year">{{ movie.year }}</span>
-                                        <span class="rating"><i class="fas fa-star"></i> {{ movie.rating_avg }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                {% endfor %}
-            </div>
-        </section>
+        {% if content_type != 'series' %}
+            <!-- Movie Sections -->
+            <section class="movie-section">
+                <div class="section-header">
+                    <h2>Trending Movies</h2>
+                    <a href="" class="view-all">View All</a>
+                </div>
+                <div class="movie-slider">
+                    {% for movie in trending_movies %}
+                        {% include 'movies/includes/movie_card.html' with movie=movie %}
+                    {% endfor %}
+                </div>
+            </section>
 
-        <!-- Latest Releases -->
-        <section class="movie-section">
-            <div class="section-header">
-                <h2>Latest Releases</h2>
-                <a href="" class="view-all">View All</a>
-            </div>
-            <div class="movie-slider">
-                {% for movie in latest_movies %}
-                    <div class="movie-card">
-                        <a href="{% url 'movies:details' movie.slug %}">
-                            <div class="movie-poster">
-                                <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}">
-                                <div class="movie-info">
-                                    <h3>{{ movie.title }}</h3>
-                                    <div class="movie-meta">
-                                        <span class="year">{{ movie.year }}</span>
-                                        <span class="rating"><i class="fas fa-star"></i> {{ movie.rating_avg }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                {% endfor %}
-            </div>
-        </section>
+            <section class="movie-section">
+                <div class="section-header">
+                    <h2>Latest Movies</h2>
+                    <a href="" class="view-all">View All</a>
+                </div>
+                <div class="movie-slider">
+                    {% for movie in latest_movies %}
+                        {% include 'movies/includes/movie_card.html' with movie=movie %}
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
 
-        <!-- Top Rated -->
-        <section class="movie-section">
-            <div class="section-header">
-                <h2>Top Rated</h2>
-                <a href="" class="view-all">View All</a>
-            </div>
-            <div class="movie-slider">
-                {% for movie in top_rated_movies %}
-                    <div class="movie-card">
-                        <a href="{% url 'movies:details' movie.slug %}">
-                            <div class="movie-poster">
-                                <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}">
-                                <div class="movie-info">
-                                    <h3>{{ movie.title }}</h3>
-                                    <div class="movie-meta">
-                                        <span class="year">{{ movie.year }}</span>
-                                        <span class="rating"><i class="fas fa-star"></i> {{ movie.rating_avg }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                {% endfor %}
-            </div>
-        </section>
+        {% if content_type != 'series' %}
+            <!-- Series Sections -->
+            <section class="movie-section">
+                <div class="section-header">
+                    <h2>Trending Series</h2>
+                    <a href="" class="view-all">View All</a>
+                </div>
+                <div class="movie-slider">
+                    {% for series in trending_series %}
+                        {% include 'series/includes/series_card.html' with series=series %}
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="movie-section">
+                <div class="section-header">
+                    <h2>Latest Series</h2>
+                    <a href="" class="view-all">View All</a>
+                </div>
+                <div class="movie-slider">
+                    {% for series in latest_series %}
+                        {% include 'series/includes/series_card.html' with series=series %}
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        {% if content_type != 'series' %}
+            <section class="movie-section">
+                <div class="section-header">
+                    <h2>Top Rated Movies</h2>
+                    <a href="" class="view-all">View All</a>
+                </div>
+                <div class="movie-slider">
+                    {% for movie in top_rated_movies %}
+                        {% include 'movies/includes/movie_card.html' with movie=movie %}
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        {% if content_type != 'movies' %}
+            <section class="movie-section">
+                <div class="section-header">
+                    <h2>Top Rated Series</h2>
+                    <a href="" class="view-all">View All</a>
+                </div>
+                <div class="movie-slider">
+                    {% for series in top_rated_series %}
+                        {% include 'series/includes/series_card.html' with series=series %}
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
     </div>
 {% endblock %}

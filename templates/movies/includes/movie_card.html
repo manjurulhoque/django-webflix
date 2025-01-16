@@ -1,0 +1,14 @@
+<div class="movie-card">
+    <a href="{% url 'movies:details' movie.slug %}">
+        <div class="movie-poster">
+            <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}">
+            <div class="movie-info">
+                <h3>{{ movie.title }}</h3>
+                <div class="movie-meta">
+                    <span class="year">{{ movie.year }}</span>
+                    <span class="rating"><i class="fas fa-star"></i> {{ movie.rating_avg }}</span>
+                </div>
+            </div>
+        </div>
+    </a>
+</div> 

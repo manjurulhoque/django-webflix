@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="movie-detail">
+    <!-- Hero Section -->
+    <div class="hero-section" style="background-image: url('{{ series.cover }}')">
+        <div class="hero-overlay">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="hero-content">
+                            <h1>{{ series.title }}</h1>
+                            {% if series.original_title %}
+                                <h2 class="original-title">{{ series.original_title }}</h2>
+                            {% endif %}
+                            <div class="meta-info">
+                                <span class="year">{{ series.year }}</span>
+                                <span class="rating">
+                                    <i class="fas fa-star"></i> {{ series.imdb }}/10
+                                </span>
+                                <span class="seasons">
+                                    {{ series.total_seasons }} Season{{ series.total_seasons|pluralize }}
+                                </span>
+                                {% if series.classification %}
+                                    <span class="classification">{{ series.classification }}+</span>
+                                {% endif %}
+                            </div>
+                            <p class="description">{{ series.description }}</p>
+                            <div class="hero-buttons">
+                                {% if series.seasons.exists %}
+                                    <a href="#seasons" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-play"></i> Watch Now
+                                    </a>
+                                {% endif %}
+                                {% if series.trailer_url %}
+                                    <a href="{{ series.trailer_url }}" class="btn btn-secondary btn-lg">
+                                        <i class="fas fa-film"></i> Watch Trailer
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="series-poster">
+                            <img src="{{ series.thumbnail }}" alt="{{ series.title }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Seasons and Episodes -->
+        <section id="seasons" class="seasons-section">
+            <h2>Episodes</h2>
+            <div class="accordion" id="seasonsAccordion">
+                {% for season in seasons %}
+                    <div class="card">
+                        <div class="card-header" id="heading{{ season.number }}">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" 
+                                        data-target="#collapse{{ season.number }}" 
+                                        aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" 
+                                        aria-controls="collapse{{ season.number }}">
+                                    Season {{ season.number }}
+                                </button>
+                            </h2>
+                        </div>
+
+                        <div id="collapse{{ season.number }}" 
+                             class="collapse {% if forloop.first %}show{% endif %}" 
+                             aria-labelledby="heading{{ season.number }}" 
+                             data-parent="#seasonsAccordion">
+                            <div class="card-body">
+                                <div class="episodes-list">
+                                    {% for episode in season.episodes.all %}
+                                        <div class="episode-item">
+                                            <div class="episode-thumbnail">
+                                                <img src="{{ episode.thumbnail }}" alt="Episode {{ episode.number }}">
+                                                <div class="episode-number">E{{ episode.number }}</div>
+                                            </div>
+                                            <div class="episode-info">
+                                                <h3>{{ episode.title }}</h3>
+                                                <p>{{ episode.description|truncatechars:150 }}</p>
+                                                <div class="episode-meta">
+                                                    <span class="duration">{{ episode.duration }} min</span>
+                                                    <span class="views">{{ episode.views }} views</span>
+                                                </div>
+                                            </div>
+                                            <div class="episode-actions">
+                                                <a href="#" class="btn btn-primary">
+                                                    <i class="fas fa-play"></i> Watch
+                                                </a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Similar Series -->
+        {% if similar_series %}
+            <section class="similar-section">
+                <h2>Similar Series</h2>
+                <div class="movie-slider">
+                    {% for series in similar_series %}
+                        {% include 'series/includes/series_card.html' with series=series %}
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.episodes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.episode-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+}
+
+.episode-thumbnail {
+    position: relative;
+    width: 200px;
+    flex-shrink: 0;
+}
+
+.episode-thumbnail img {
+    width: 100%;
+    height: 112px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.episode-number {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0,0,0,0.7);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.episode-info {
+    flex-grow: 1;
+}
+
+.episode-info h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.episode-meta {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+.episode-meta span {
+    margin-right: 1rem;
+}
+
+.episode-actions {
+    display: flex;
+    align-items: center;
+}
+</style>
+{% endblock %} 
