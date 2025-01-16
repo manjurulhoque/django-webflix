@@ -13,6 +13,7 @@ from core.models import Actor
 from genres.models import Genre
 from accounts.models import User
 
+
 def thumbnail_directory_path(instance, filename):
     return "thumbnails/{0}/{1}".format(
         strftime("%Y/%m/%d"), generate_file_name() + "." + filename.split(".")[-1]
@@ -246,59 +247,6 @@ class Review(models.Model):
         return f"{self.user.username}'s review on {self.movie.title}"
 
 
-class Favorite(models.Model):
-    """
-    Favorite model to store user favorites
-    """
-
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="favorites")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ["movie", "user"]
-        ordering = ["-created"]
-
-    def __str__(self):
-        return f"{self.user.username}'s favorite: {self.movie.title}"
-
-
-class WatchHistory(models.Model):
-    """Track user's watch history"""
-
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    watched_duration = models.IntegerField(
-        default=0, help_text="Duration watched in seconds"
-    )
-    completed = models.BooleanField(default=False)
-    last_watched = models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ["-last_watched"]
-        verbose_name_plural = "Watch histories"
-
-    def __str__(self):
-        return f"{self.user.username} - {self.movie.title}"
-
-
-class Watchlist(models.Model):
-    """User's watchlist/playlist"""
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    added_date = models.DateTimeField(auto_now_add=True)
-    notes = models.TextField(blank=True, null=True)
-
-    class Meta:
-        unique_together = ["user", "movie"]
-        ordering = ["-added_date"]
-
-    def __str__(self):
-        return f"{self.user.username}'s watchlist: {self.movie.title}"
-
-
 class Report(models.Model):
     """
     Allow users to report issues with movies
@@ -324,6 +272,61 @@ class Report(models.Model):
         self.resolution_notes = notes
         self.resolved_date = timezone.now()
         self.save()
+
+
+class MovieFavorite(models.Model):
+    """User's favorite movies"""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["user", "movie"]
+        ordering = ["-created"]
+
+    def __str__(self):
+        return f"{self.user.username}'s favorite: {self.movie.title}"
+
+
+class MovieWatchList(models.Model):
+    """User's watchlist/playlist"""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    added_date = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True, null=True)
+
+    class Meta:
+        unique_together = ["user", "movie"]
+        ordering = ["-added_date"]
+
+    def __str__(self):
+        return f"{self.user.username}'s watchlist: {self.movie.title}"
+
+
+class MovieWatchHistory(models.Model):
+    """User's watch history"""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    watched_duration = models.IntegerField(default=0)
+    completed = models.BooleanField(default=False)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-updated"]
+        verbose_name_plural = "Watch histories"
+
+    def __str__(self):
+        return f"{self.user.username} - {self.movie.title}"
+
+    @property
+    def progress(self):
+        if self.movie.duration:
+            return int((self.watched_duration / self.movie.duration) * 100)
+        return 0
 
 
 def generate_file_name(length=30):

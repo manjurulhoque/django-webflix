@@ -3018,3 +3018,7 @@ img.country-logo {
         margin-bottom: 15px;
     }
 }
+
+.page-header h1 {
+    font-size: 20px;
+}

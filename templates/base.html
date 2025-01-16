@@ -92,15 +92,19 @@
                 <img src="{% static "img/logo.png" %}" alt="logo">
                 <div class="btn-group float-right ">
                     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false"><span
-                            class="for-desktop"> {{ request.user.get_full_name }} </span>
-                        <img src="" alt="">
+                            aria-haspopup="true" aria-expanded="false">
+                            <span class="for-desktop"> {{ request.user.get_full_name }} </span>
+                            {% if request.user.avatar %}
+                                <img src="{{ request.user.avatar.url }}" alt="">
+                            {% else %}
+                                <i class="fas fa-user" style="margin-top: 10px;"></i>
+                            {% endif %}
                     </button>
                     <div class="dropdown-menu dropdown-login">
-                        <a class="dropdown-item" href="#">
+                        <a class="dropdown-item" href="{% url 'accounts:profile' %}">
                             <i class="fas fa-user"></i> My Profile
                         </a>
-                        <a class="dropdown-item" href="#">
+                        <a class="dropdown-item" href="{% url 'accounts:edit_profile' %}">
                             <i class="fas fa-user-edit"></i> Edit Profile
                         </a>
                         <a class="dropdown-item" href="#">
@@ -149,13 +153,17 @@
                         <div class="btn-group float-right ">
                             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="for-desktop"> {{ request.user.get_full_name }} </span>
-                                <img src="" alt="">
+                                {% if request.user.avatar %}
+                                    <img src="{{ request.user.avatar.url }}" alt="">
+                                {% else %}
+                                    <i class="fas fa-user" style="margin-top: 10px;"></i>
+                                {% endif %}
                             </button>
                             <div class="dropdown-menu dropdown-login">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{% url 'accounts:profile' %}">
                                     <i class="fas fa-user"></i> My Profile
                                 </a>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{% url 'accounts:edit_profile' %}">
                                     <i class="fas fa-user-edit"></i> Edit Profile
                                 </a>
                                 <a class="dropdown-item" href="#">

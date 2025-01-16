@@ -1,20 +1,26 @@
 from django.contrib import messages, auth
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.views.generic import CreateView, FormView, RedirectView
-from accounts.forms import UserRegistrationForm, UserLoginForm
+from django.views.generic import (
+    CreateView,
+    FormView,
+    RedirectView,
+    TemplateView,
+    UpdateView,
+)
+from django.urls import reverse_lazy
+
+from accounts.forms import UserRegistrationForm, UserLoginForm, UserEditProfileForm
 from accounts.models import User
 
 
 class RegisterView(CreateView):
     model = User
     form_class = UserRegistrationForm
-    template_name = 'accounts/register.html'
-    success_url = '/'
+    template_name = "accounts/register.html"
+    success_url = "/"
 
-    extra_context = {
-        'title': 'Register'
-    }
+    extra_context = {"title": "Register"}
 
     def dispatch(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
@@ -30,22 +36,21 @@ class RegisterView(CreateView):
             password = form.cleaned_data.get("password1")
             user.set_password(password)
             user.save()
-            return redirect('accounts:login')
+            return redirect("accounts:login")
         else:
-            return render(request, 'accounts/register.html', {'form': form})
+            return render(request, "accounts/register.html", {"form": form})
 
 
 class LoginView(FormView):
     """
-        Provides the ability to login as a user with an email and password
+    Provides the ability to login as a user with an email and password
     """
-    success_url = '/'
-    form_class = UserLoginForm
-    template_name = 'accounts/login.html'
 
-    extra_context = {
-        'title': 'Login'
-    }
+    success_url = "/"
+    form_class = UserLoginForm
+    template_name = "accounts/login.html"
+
+    extra_context = {"title": "Login"}
 
     def dispatch(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
@@ -53,8 +58,8 @@ class LoginView(FormView):
         return super().dispatch(self.request, *args, **kwargs)
 
     def get_success_url(self):
-        if 'next' in self.request.GET and self.request.GET['next'] != '':
-            return self.request.GET['next']
+        if "next" in self.request.GET and self.request.GET["next"] != "":
+            return self.request.GET["next"]
         else:
             return self.success_url
 
@@ -74,9 +79,34 @@ class LogoutView(RedirectView):
     """
     Provides users the ability to logout
     """
-    url = '/'
+
+    url = "/"
 
     def get(self, request, *args, **kwargs):
         auth.logout(request)
-        messages.success(request, 'You are now logged out')
+        messages.success(request, "You are now logged out")
         return super(LogoutView, self).get(request, *args, **kwargs)
+
+
+class UserProfileView(TemplateView):
+    template_name = "accounts/profile.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["user"] = self.request.user
+        return context
+
+
+class UserEditProfileView(UpdateView):
+    model = User
+    form_class = UserEditProfileForm
+    template_name = "accounts/edit_profile.html"
+    success_url = reverse_lazy("accounts:profile")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Edit Profile"
+        return context
+
+    def get_object(self):
+        return self.request.user

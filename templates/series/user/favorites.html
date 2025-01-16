@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}My Favorite Series{% endblock %}
+{% block styles %}
+    <link href="{% static 'css/user-lists.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
 <div class="container">

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block styles %}
+    <link href="{% static 'css/profile.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-user"></i> My Profile</h1>
+    </div>
+
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="profile-info">
+                <h2>{{ user.get_full_name }}</h2>
+                <p class="email">{{ user.email }}</p>
+                <div class="profile-actions">
+                    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary">
+                        <i class="fas fa-user-edit"></i> Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-stats">
+            <div class="stat-item">
+                <span class="stat-value">{{ user.seriesfavorite_set.count }}</span>
+                <span class="stat-label">Favorites</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ user.serieswatchlist_set.count }}</span>
+                <span class="stat-label">Watchlist</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ user.serieswatchhistory_set.count }}</span>
+                <span class="stat-label">Watched</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -198,36 +198,45 @@ def generate_file_name(length=30):
 
 class SeriesFavorite(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    series = models.ForeignKey('Series', on_delete=models.CASCADE)
+    series = models.ForeignKey("Series", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user', 'series')
-        ordering = ['-created']
+        unique_together = ("user", "series")
+        ordering = ["-created"]
+
+    def __str__(self):
+        return f"{self.user.username}'s favorite: {self.series.title}"
 
 
 class SeriesWatchList(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    series = models.ForeignKey('Series', on_delete=models.CASCADE)
+    series = models.ForeignKey("Series", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user', 'series')
-        ordering = ['-created']
+        unique_together = ("user", "series")
+        ordering = ["-created"]
+
+    def __str__(self):
+        return f"{self.user.username}'s watchlist: {self.series.title}"
 
 
 class SeriesWatchHistory(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    series = models.ForeignKey('Series', on_delete=models.CASCADE)
-    episode = models.ForeignKey('Episode', on_delete=models.CASCADE)
+    series = models.ForeignKey("Series", on_delete=models.CASCADE)
+    episode = models.ForeignKey("Episode", on_delete=models.CASCADE)
     watched_duration = models.PositiveIntegerField(default=0)
     completed = models.BooleanField(default=False)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user', 'series', 'episode')
-        ordering = ['-updated']
+        unique_together = ("user", "series", "episode")
+        ordering = ["-updated"]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.series.title} - {self.episode.title}"
 
     @property
     def progress(self):

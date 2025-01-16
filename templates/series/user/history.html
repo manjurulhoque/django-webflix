@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}My Watch History{% endblock %}
-
 {% block content %}
 <div class="container">
     <div class="page-header">
@@ -51,7 +49,7 @@
     {% else %}
         <div class="empty-state">
             <i class="fas fa-history"></i>
-            <h3>No Watch History</h3>
+            <h5>No Watch History</h5>
             <p>Your watch history will appear here once you start watching series.</p>
             <a href="{% url 'series:index' %}" class="btn btn-primary">Browse Series</a>
         </div>

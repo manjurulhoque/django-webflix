@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block styles %}
+    <link href="{% static 'css/profile.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-user-edit"></i> Edit Profile</h1>
+    </div>
+
+    <div class="profile-card">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="avatar-upload">
+                <div class="avatar-preview">
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="Profile Avatar">
+                    {% else %}
+                        <i class="fas fa-user-circle"></i>
+                    {% endif %}
+                </div>
+                <div class="avatar-edit">
+                    <label for="{{ form.avatar.id_for_label }}" class="btn btn-secondary">
+                        <i class="fas fa-camera"></i> Change Avatar
+                    </label>
+                    {{ form.avatar }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="{{ form.first_name.id_for_label }}">
+                        <i class="fas fa-user"></i> {{ form.first_name.label }}
+                    </label>
+                    <input type="text" class="form-control" id="{{ form.first_name.id_for_label }}" name="{{ form.first_name.name }}" value="{{ form.first_name.value }}" placeholder="{{ form.first_name.label }}">
+                    {% if form.first_name.errors %}
+                        <div class="invalid-feedback">
+                            {{ form.first_name.errors|join:", " }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="{{ form.last_name.id_for_label }}">
+                        <i class="fas fa-user"></i> {{ form.last_name.label }}
+                    </label>
+                    <input type="text" class="form-control" id="{{ form.last_name.id_for_label }}" name="{{ form.last_name.name }}" value="{{ form.last_name.value }}" placeholder="{{ form.last_name.label }}">
+                    {% if form.last_name.errors %}
+                        <div class="invalid-feedback">
+                            {{ form.last_name.errors|join:", " }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group col-md-6">
+                <label for="{{ form.email.id_for_label }}">
+                    <i class="fas fa-envelope"></i> {{ form.email.label }}
+                </label>
+                <input type="email" class="form-control" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" value="{{ form.email.value }}" placeholder="{{ form.email.label }}">
+                {% if form.email.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.email.errors|join:", " }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <a href="{% url 'accounts:profile' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('{{ form.avatar.id_for_label }}').onchange = function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.querySelector('.avatar-preview img');
+            if (preview) {
+                preview.src = e.target.result;
+            } else {
+                const newImg = document.createElement('img');
+                newImg.src = e.target.result;
+                document.querySelector('.avatar-preview').innerHTML = '';
+                document.querySelector('.avatar-preview').appendChild(newImg);
+            }
+        }
+        reader.readAsDataURL(file);
+    }
+}
+</script>
+{% endblock %} 

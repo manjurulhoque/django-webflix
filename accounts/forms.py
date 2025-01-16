@@ -10,48 +10,48 @@ class UserRegistrationForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super(UserRegistrationForm, self).__init__(*args, **kwargs)
-        self.fields['first_name'].label = "First Name"
-        self.fields['last_name'].label = "Last Name"
-        self.fields['password1'].label = "Password"
-        self.fields['password2'].label = "Confirm Password"
+        self.fields["first_name"].label = "First Name"
+        self.fields["last_name"].label = "Last Name"
+        self.fields["password1"].label = "Password"
+        self.fields["password2"].label = "Confirm Password"
 
-        self.fields['first_name'].widget.attrs.update(
+        self.fields["first_name"].widget.attrs.update(
             {
-                'placeholder': 'Enter First Name',
+                "placeholder": "Enter First Name",
             }
         )
-        self.fields['last_name'].widget.attrs.update(
+        self.fields["last_name"].widget.attrs.update(
             {
-                'placeholder': 'Enter Last Name',
+                "placeholder": "Enter Last Name",
             }
         )
-        self.fields['email'].widget.attrs.update(
+        self.fields["email"].widget.attrs.update(
             {
-                'placeholder': 'Enter Email',
+                "placeholder": "Enter Email",
             }
         )
-        self.fields['password1'].widget.attrs.update(
+        self.fields["password1"].widget.attrs.update(
             {
-                'placeholder': 'Enter Password',
+                "placeholder": "Enter Password",
             }
         )
-        self.fields['password2'].widget.attrs.update(
+        self.fields["password2"].widget.attrs.update(
             {
-                'placeholder': 'Confirm Password',
+                "placeholder": "Confirm Password",
             }
         )
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'password1', 'password2']
+        fields = ["first_name", "last_name", "email", "password1", "password2"]
         error_messages = {
-            'first_name': {
-                'required': 'First name is required',
-                'max_length': 'Name is too long'
+            "first_name": {
+                "required": "First name is required",
+                "max_length": "Name is too long",
             },
-            'last_name': {
-                'required': 'Last name is required',
-                'max_length': 'Last Name is too long'
+            "last_name": {
+                "required": "Last name is required",
+                "max_length": "Last Name is too long",
             },
         }
 
@@ -73,8 +73,10 @@ class UserLoginForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = None
-        self.fields['email'].widget.attrs.update({'placeholder': 'Enter Your Email'})
-        self.fields['password'].widget.attrs.update({'placeholder': 'Enter Your Password'})
+        self.fields["email"].widget.attrs.update({"placeholder": "Enter Your Email"})
+        self.fields["password"].widget.attrs.update(
+            {"placeholder": "Enter Your Password"}
+        )
 
     def clean(self, *args, **kwargs):
         email = self.cleaned_data.get("email")
@@ -94,3 +96,15 @@ class UserLoginForm(forms.Form):
 
     def get_user(self):
         return self.user
+
+
+class UserEditProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "email", "avatar"]
+
+    def __init__(self, *args, **kwargs):
+        super(UserEditProfileForm, self).__init__(*args, **kwargs)
+        self.fields["first_name"].widget.attrs.update({"placeholder": "Enter First Name"})
+        self.fields["last_name"].widget.attrs.update({"placeholder": "Enter Last Name"})
+        self.fields["email"].widget.attrs.update({"placeholder": "Enter Email"})

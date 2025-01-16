@@ -3,13 +3,18 @@ from django.views.generic import DetailView, ListView
 from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.db.models import F
+from django.views import View
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import (
     Movie,
     MovieStatusChoices,
-    Favorite,
-    WatchHistory,
-    Genre
+    MovieWatchHistory,
+    MovieWatchList,
+    Genre,
+    MovieFavorite,
 )
 
 
@@ -29,31 +34,40 @@ class MovieDetailsView(DetailView):
         context["user_membership"] = None
         if user.is_authenticated:
             context["user_membership"] = None
-            context["is_favorite"] = Favorite.objects.filter(user=user, movie=movie).exists()
-            context["watch_history"] = WatchHistory.objects.filter(user=user, movie=movie).first()
+            context["is_favorite"] = MovieFavorite.objects.filter(
+                user=user, movie=movie
+            ).exists()
+            context["in_watch_list"] = MovieWatchList.objects.filter(
+                user=user, movie=movie
+            ).exists()
+            context["watch_history"] = MovieWatchHistory.objects.filter(
+                user=user, movie=movie
+            ).first()
 
         # Get similar movies based on genres
         movie_genres = movie.genres.all()
-        similar_movies = Movie.objects.filter(
-            status=MovieStatusChoices.PUBLISHED,
-            genres__in=movie_genres
-        ).exclude(
-            id=movie.id
-        ).distinct()[:6]
+        similar_movies = (
+            Movie.objects.filter(
+                status=MovieStatusChoices.PUBLISHED, genres__in=movie_genres
+            )
+            .exclude(id=movie.id)
+            .distinct()[:6]
+        )
         context["similar_movies"] = similar_movies
 
         # Get movie statistics
-        context["total_watches"] = WatchHistory.objects.filter(movie=movie).count()
-        context["total_favorites"] = Favorite.objects.filter(movie=movie).count()
+        context["total_watches"] = MovieWatchHistory.objects.filter(movie=movie).count()
+        context["total_favorites"] = MovieFavorite.objects.filter(movie=movie).count()
 
         # Get available video qualities
-        context["available_qualities"] = movie.videos.all().order_by('-quality')
+        context["available_qualities"] = movie.videos.all().order_by("-quality")
 
         # Get reviews with pagination
         from django.core.paginator import Paginator
-        reviews = movie.reviews.all().order_by('-created')
+
+        reviews = movie.reviews.all().order_by("-created")
         paginator = Paginator(reviews, 10)  # 10 reviews per page
-        page = self.request.GET.get('page')
+        page = self.request.GET.get("page")
         context["reviews"] = paginator.get_page(page)
 
         # Additional movie metadata
@@ -72,30 +86,26 @@ class MovieDetailsView(DetailView):
 
         # Get the movie with all related data in one query
         queryset = queryset.prefetch_related(
-            'genres',
-            'actors',
-            'videos',
-            'reviews',
-            'categories'
+            "genres", "actors", "videos", "reviews", "categories"
         )
 
         slug = self.kwargs.get(self.slug_url_kwarg)
-        
+
         try:
             obj = queryset.get(slug=slug, status=MovieStatusChoices.PUBLISHED)
-            
+
             # Increment view count
             if self.request.user.is_authenticated:
-                if not WatchHistory.objects.filter(
+                if not MovieWatchHistory.objects.filter(
                     user=self.request.user,
                     movie=obj,
-                    created__date=timezone.now().date()
+                    created__date=timezone.now().date(),
                 ).exists():
-                    obj.views = F('views') + 1
-                    obj.save(update_fields=['views'])
+                    obj.views = F("views") + 1
+                    obj.save(update_fields=["views"])
 
             return obj
-            
+
         except queryset.model.DoesNotExist:
             raise Http404(
                 _("No %(verbose_name)s found matching the query")
@@ -107,11 +117,12 @@ class MovieDetailsView(DetailView):
         Return the queryset that will be used to look up the movie.
         """
         queryset = super().get_queryset()
-        
+
         # Only show published movies
         queryset = queryset.filter(status=MovieStatusChoices.PUBLISHED)
-        
+
         return queryset
+
 
 class MovieSearchView(DetailView):
     model = Movie
@@ -120,9 +131,11 @@ class MovieSearchView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        query = self.request.GET.get('query')
+        query = self.request.GET.get("query")
         context["query"] = query
-        context["results"] = Movie.objects.filter(title__icontains=query, status=MovieStatusChoices.PUBLISHED)
+        context["results"] = Movie.objects.filter(
+            title__icontains=query, status=MovieStatusChoices.PUBLISHED
+        )
         return context
 
     def get_queryset(self):
@@ -136,38 +149,73 @@ class MovieSearchView(DetailView):
 
         return queryset
 
+
 class MovieListView(ListView):
     model = Movie
-    template_name = 'movies/index.html'
-    context_object_name = 'movies'
+    template_name = "movies/index.html"
+    context_object_name = "movies"
     paginate_by = 24
-    
+
     def get_queryset(self):
         queryset = Movie.objects.filter(status=MovieStatusChoices.PUBLISHED)
-        
+
         # Handle sorting
-        sort = self.request.GET.get('sort', 'newest')
-        if sort == 'newest':
-            queryset = queryset.order_by('-created')
-        elif sort == 'views':
-            queryset = queryset.order_by('-views')
-        elif sort == 'rating':
-            queryset = queryset.order_by('-rating_avg')
-        elif sort == 'imdb':
-            queryset = queryset.order_by('-imdb')
-            
+        sort = self.request.GET.get("sort", "newest")
+        if sort == "newest":
+            queryset = queryset.order_by("-created")
+        elif sort == "views":
+            queryset = queryset.order_by("-views")
+        elif sort == "rating":
+            queryset = queryset.order_by("-rating_avg")
+        elif sort == "imdb":
+            queryset = queryset.order_by("-imdb")
+
         # Handle genre filtering
-        genre = self.request.GET.get('genre')
+        genre = self.request.GET.get("genre")
         if genre:
             queryset = queryset.filter(genres__slug=genre)
-            
+
         return queryset
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({
-            'sort': self.request.GET.get('sort', 'newest'),
-            'selected_genre': self.request.GET.get('genre'),
-            'genres': Genre.objects.filter(is_active=True),
-        })
+        context.update(
+            {
+                "sort": self.request.GET.get("sort", "newest"),
+                "selected_genre": self.request.GET.get("genre"),
+                "genres": Genre.objects.filter(is_active=True),
+            }
+        )
         return context
+
+
+class ToggleMovieFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, slug):
+        movie = get_object_or_404(Movie, slug=slug)
+        favorite, created = MovieFavorite.objects.get_or_create(
+            user=request.user, movie=movie
+        )
+
+        if not created:
+            favorite.delete()
+            is_favorite = False
+        else:
+            is_favorite = True
+
+        return JsonResponse({"status": "success", "is_favorite": is_favorite})
+
+
+class ToggleMovieWatchlistView(LoginRequiredMixin, View):
+    def post(self, request, slug):
+        movie = get_object_or_404(Movie, slug=slug)
+        watchlist, created = MovieWatchList.objects.get_or_create(
+            user=request.user, movie=movie
+        )
+
+        if not created:
+            watchlist.delete()
+            in_watch_list = False
+        else:
+            in_watch_list = True
+
+        return JsonResponse({"status": "success", "in_watch_list": in_watch_list})
