@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from django.views.generic import DetailView
-from .models import Series, SeriesStatusChoices
+from django.views.generic import DetailView, ListView
+from .models import Series, SeriesStatusChoices, Genre
 
 
 class SeriesDetailsView(DetailView):
@@ -32,11 +32,36 @@ class SeriesDetailsView(DetailView):
         return context
 
 
-def series_list(request):
-    return render(
-        request,
-        "series/index.html",
-        {
-            "series": Series.objects.filter(status="published").order_by("-created"),
-        },
-    )
+class SeriesListView(ListView):
+    model = Series
+    template_name = 'series/index.html'
+    context_object_name = 'series_list'
+    paginate_by = 24
+    
+    def get_queryset(self):
+        queryset = Series.objects.filter(status=SeriesStatusChoices.PUBLISHED)
+        
+        # Handle sorting
+        sort = self.request.GET.get('sort', 'newest')
+        if sort == 'newest':
+            queryset = queryset.order_by('-created')
+        elif sort == 'views':
+            queryset = queryset.order_by('-views')
+        elif sort == 'rating':
+            queryset = queryset.order_by('-imdb')
+            
+        # Handle genre filtering
+        genre = self.request.GET.get('genre')
+        if genre:
+            queryset = queryset.filter(genres__slug=genre)
+            
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'sort': self.request.GET.get('sort', 'newest'),
+            'selected_genre': self.request.GET.get('genre'),
+            'genres': Genre.objects.filter(is_active=True),
+        })
+        return context

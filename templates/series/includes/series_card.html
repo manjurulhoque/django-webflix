@@ -1,10 +1,10 @@
-<div class="movie-card">
+<div class="series-card">
     <a href="{% url 'series:details' series.slug %}">
-        <div class="movie-poster">
+        <div class="series-poster">
             <img src="{{ series.thumbnail }}" alt="{{ series.title }}">
-            <div class="movie-info">
+            <div class="series-info">
                 <h3>{{ series.title }}</h3>
-                <div class="movie-meta">
+                <div class="series-meta">
                     <span class="year">{{ series.year }}</span>
                     <span class="seasons">{{ series.total_seasons }} Season{{ series.total_seasons|pluralize }}</span>
                     <span class="rating"><i class="fas fa-star"></i> {{ series.imdb }}</span>

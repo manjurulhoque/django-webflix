@@ -1,5 +1,5 @@
 from django.http import Http404
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.db.models import F
@@ -8,7 +8,8 @@ from .models import (
     Movie,
     MovieStatusChoices,
     Favorite,
-    WatchHistory
+    WatchHistory,
+    Genre
 )
 
 
@@ -134,3 +135,39 @@ class MovieSearchView(DetailView):
         queryset = queryset.filter(status=MovieStatusChoices.PUBLISHED)
 
         return queryset
+
+class MovieListView(ListView):
+    model = Movie
+    template_name = 'movies/index.html'
+    context_object_name = 'movies'
+    paginate_by = 24
+    
+    def get_queryset(self):
+        queryset = Movie.objects.filter(status=MovieStatusChoices.PUBLISHED)
+        
+        # Handle sorting
+        sort = self.request.GET.get('sort', 'newest')
+        if sort == 'newest':
+            queryset = queryset.order_by('-created')
+        elif sort == 'views':
+            queryset = queryset.order_by('-views')
+        elif sort == 'rating':
+            queryset = queryset.order_by('-rating_avg')
+        elif sort == 'imdb':
+            queryset = queryset.order_by('-imdb')
+            
+        # Handle genre filtering
+        genre = self.request.GET.get('genre')
+        if genre:
+            queryset = queryset.filter(genres__slug=genre)
+            
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'sort': self.request.GET.get('sort', 'newest'),
+            'selected_genre': self.request.GET.get('genre'),
+            'genres': Genre.objects.filter(is_active=True),
+        })
+        return context

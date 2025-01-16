@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Movies{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Filters -->
+    <div class="filters-section">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="sort-options">
+                    <a href="?sort=newest" class="btn btn-secondary {% if sort == 'newest' %}active{% endif %}">
+                        <i class="far fa-clock"></i><span class="d-none d-md-inline"> Newest</span>
+                    </a>
+                    <a href="?sort=views" class="btn btn-secondary {% if sort == 'views' %}active{% endif %}">
+                        <i class="far fa-eye"></i><span class="d-none d-md-inline"> Views</span>
+                    </a>
+                    <a href="?sort=rating" class="btn btn-secondary {% if sort == 'rating' %}active{% endif %}">
+                        <i class="fas fa-star-half-alt"></i><span class="d-none d-md-inline"> Rating</span>
+                    </a>
+                    <a href="?sort=imdb" class="btn btn-secondary {% if sort == 'imdb' %}active{% endif %}">
+                        <i class="fab fa-imdb"></i><span class="d-none d-md-inline"> IMDb</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="genre-filter float-right">
+                    <button type="button" class="btn btn-secondary dropdown-toggle"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {% if selected_genre %}
+                            {{ selected_genre|title }}
+                        {% else %}
+                            All Genres
+                        {% endif %}
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item {% if not selected_genre %}active{% endif %}" href="?genre=all">
+                            All Genres
+                        </a>
+                        {% for genre in genres %}
+                            <a class="dropdown-item {% if selected_genre == genre.slug %}active{% endif %}" 
+                               href="?genre={{ genre.slug }}">{{ genre.title }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Movies Grid -->
+    <div class="movies-grid">
+        {% for movie in movies %}
+            {% include 'movies/includes/movie_card.html' with movie=movie %}
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+        {% include 'includes/pagination.html' %}
+    {% endif %}
+</div>
+
+<style>
+.movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.pagination-wrapper {
+    margin: 40px 0;
+}
+
+.page-link {
+    background-color: transparent;
+    border-color: rgba(255,255,255,0.1);
+    color: #aaa;
+}
+
+.page-item.active .page-link {
+    background-color: #ffa502;
+    border-color: #ffa502;
+    color: #fff;
+}
+
+.page-link:hover {
+    background-color: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.2);
+    color: #fff;
+}
+</style>
+{% endblock %} 

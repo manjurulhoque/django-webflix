@@ -35,20 +35,20 @@
                     <ul class="navbar-nav">
                         <a href="{% url 'core:pricing' %}" class="btn btn-subscription">
                             <i class="fas fa-star"></i> Subscribe now !</a>
-                        <li class="nav-item">
+                        <li class="nav-item {% if request.path == '/' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'core:home' %}">
                                 <i class="fas fa-home"></i>
                                 Home
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="">
+                        <li class="nav-item {% if request.path == '/movies/' %}active{% endif %}">
+                            <a class="nav-link" href="{% url 'movies:index' %}">
                                 <i class="fas fa-film"></i> Movies
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="">
-                                <i class="fas fa-desktop"></i> Tv Shows
+                        <li class="nav-item {% if request.path == '/series/' %}active{% endif %}">
+                            <a class="nav-link" href="{% url 'series:index' %}">
+                                <i class="fas fa-desktop"></i> TV Shows
                             </a>
                         </li>
                         {% comment %} <li class="nav-item">
@@ -56,10 +56,12 @@
                                 <i class="fas fa-bullseye"></i> Tv Channels
                             </a>
                         </li> {% endcomment %}
-                        <li class="nav-item">
-                            <a class="nav-link" href=""><i class="fas fa-folder"></i> My list
-                            </a>
-                        </li>
+                        {% if request.user.is_authenticated %}
+                            <li class="nav-item {% if request.path == '/mylist/' %}active{% endif %}">
+                                <a class="nav-link" href=""><i class="fas fa-folder"></i> My list
+                                </a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </nav>
             </div>
