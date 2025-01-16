@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block styles %}
+    <link href="{% static 'css/series-details.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 <div class="movie-detail">
     <!-- Hero Section -->
@@ -15,16 +19,21 @@
                                 <h2 class="original-title">{{ series.original_title }}</h2>
                             {% endif %}
                             <div class="meta-info">
-                                <span class="year">{{ series.year }}</span>
+                                <span class="year"><i class="far fa-calendar-alt"></i> {{ series.year }}</span>
                                 <span class="rating">
                                     <i class="fas fa-star"></i> {{ series.imdb }}/10
                                 </span>
                                 <span class="seasons">
-                                    {{ series.total_seasons }} Season{{ series.total_seasons|pluralize }}
+                                    <i class="fas fa-tv"></i> {{ series.total_seasons }} Season{{ series.total_seasons|pluralize }}
                                 </span>
                                 {% if series.classification %}
-                                    <span class="classification">{{ series.classification }}+</span>
+                                    <span class="classification">
+                                        <i class="fas fa-user-shield"></i> {{ series.classification }}+
+                                    </span>
                                 {% endif %}
+                                <span class="language">
+                                    <i class="fas fa-globe"></i> {{ series.language }}
+                                </span>
                             </div>
                             <p class="description">{{ series.description }}</p>
                             <div class="hero-buttons">
@@ -64,7 +73,7 @@
                                         data-target="#collapse{{ season.number }}" 
                                         aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" 
                                         aria-controls="collapse{{ season.number }}">
-                                    Season {{ season.number }}
+                                    <i class="fas fa-chevron-right"></i> Season {{ season.number }}
                                 </button>
                             </h2>
                         </div>
@@ -83,10 +92,11 @@
                                             </div>
                                             <div class="episode-info">
                                                 <h3>{{ episode.title }}</h3>
-                                                <p>{{ episode.description|truncatechars:150 }}</p>
+                                                <p>{{ episode.description|truncatechars:200 }}</p>
                                                 <div class="episode-meta">
-                                                    <span class="duration">{{ episode.duration }} min</span>
-                                                    <span class="views">{{ episode.views }} views</span>
+                                                    <span><i class="far fa-clock"></i> {{ episode.duration }} min</span>
+                                                    <span><i class="far fa-eye"></i> {{ episode.views }} views</span>
+                                                    <span><i class="far fa-calendar-alt"></i> {{ episode.release_date }}</span>
                                                 </div>
                                             </div>
                                             <div class="episode-actions">
@@ -108,7 +118,7 @@
         {% if similar_series %}
             <section class="similar-section">
                 <h2>Similar Series</h2>
-                <div class="movie-slider">
+                <div class="series-grid">
                     {% for series in similar_series %}
                         {% include 'series/includes/series_card.html' with series=series %}
                     {% endfor %}
@@ -117,67 +127,4 @@
         {% endif %}
     </div>
 </div>
-
-<style>
-.episodes-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.episode-item {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background: rgba(255,255,255,0.05);
-    border-radius: 8px;
-}
-
-.episode-thumbnail {
-    position: relative;
-    width: 200px;
-    flex-shrink: 0;
-}
-
-.episode-thumbnail img {
-    width: 100%;
-    height: 112px;
-    object-fit: cover;
-    border-radius: 4px;
-}
-
-.episode-number {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    background: rgba(0,0,0,0.7);
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-}
-
-.episode-info {
-    flex-grow: 1;
-}
-
-.episode-info h3 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.1rem;
-}
-
-.episode-meta {
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    color: #aaa;
-}
-
-.episode-meta span {
-    margin-right: 1rem;
-}
-
-.episode-actions {
-    display: flex;
-    align-items: center;
-}
-</style>
 {% endblock %} 

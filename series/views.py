@@ -17,7 +17,7 @@ class SeriesDetailsView(DetailView):
         similar_series = Series.objects.filter(
             status=SeriesStatusChoices.PUBLISHED,
             genres__in=series_genres
-        ).exclude(id=series.id).distinct()[:6]
+        ).exclude(id=series.id).distinct()[:5]
 
         context.update({
             "similar_series": similar_series,
