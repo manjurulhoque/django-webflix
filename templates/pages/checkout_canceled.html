@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Canceled{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="payment-status-card canceled">
+        <div class="status-icon">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <h1>Payment Canceled</h1>
+        <p class="lead">Your payment has been canceled and you have not been charged.</p>
+        <div class="status-details">
+            <p>If you experienced any issues during checkout or have questions about our subscription plans, please don't hesitate to contact our support team.</p>
+            <div class="support-options">
+                <div class="support-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>support@webflix.com</span>
+                </div>
+                <div class="support-item">
+                    <i class="fas fa-phone"></i>
+                    <span>1-800-WEBFLIX</span>
+                </div>
+            </div>
+        </div>
+        <div class="action-buttons">
+            <a href="{% url 'core:pricing' %}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Return to Pricing
+            </a>
+            <a href="{% url 'core:faq' %}" class="btn btn-secondary">
+                <i class="fas fa-question-circle"></i> View FAQ
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.payment-status-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.payment-status-card.canceled .status-icon {
+    color: #f44336;
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.payment-status-card h1 {
+    margin-bottom: 15px;
+}
+
+.status-details {
+    margin: 30px 0;
+    text-align: left;
+}
+
+.support-options {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.support-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ddd;
+}
+
+.support-item i {
+    color: #ffa502;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.action-buttons .btn {
+    padding: 12px 25px;
+}
+
+@media (max-width: 576px) {
+    .support-options {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %} 

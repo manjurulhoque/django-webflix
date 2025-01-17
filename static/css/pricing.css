@@ -1,27 +1,10 @@
-.pricing-header {
-    text-align: center;
-    padding: 60px 0;
-    background: linear-gradient(to right, #1a1a1a, #2d2d2d);
-}
-
-.pricing-header h1 {
-    color: #fff;
-    margin-bottom: 15px;
-}
-
-.pricing-header p {
-    color: #aaa;
-    font-size: 1.1rem;
-}
-
 .pricing-card {
     background: rgba(255,255,255,0.05);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 30px;
-    height: 100%;
     position: relative;
     transition: transform 0.3s;
-    border: 1px solid rgba(255,255,255,0.1);
+    height: 100%;
 }
 
 .pricing-card:hover {
@@ -37,34 +20,36 @@
     top: -12px;
     right: 20px;
     background: #ffa502;
-    color: #000;
+    color: #fff;
     padding: 5px 15px;
     border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
+    font-size: 0.9rem;
 }
 
 .savings-badge {
     position: absolute;
     top: -12px;
     right: 20px;
-    background: #28a745;
+    background: #4CAF50;
     color: #fff;
     padding: 5px 15px;
     border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.pricing-header {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
 .pricing-header h3 {
-    color: #fff;
     margin-bottom: 20px;
+    font-size: 1.5rem;
 }
 
 .price {
     font-size: 2.5rem;
-    color: #fff;
-    margin-bottom: 20px;
+    color: #ffa502;
 }
 
 .currency {
@@ -77,17 +62,6 @@
     color: #aaa;
 }
 
-.monthly-equivalent {
-    color: #aaa;
-    font-size: 0.9rem;
-    margin-top: -15px;
-    margin-bottom: 20px;
-}
-
-.pricing-features {
-    margin: 30px 0;
-}
-
 .pricing-features ul {
     list-style: none;
     padding: 0;
@@ -95,85 +69,46 @@
 }
 
 .pricing-features li {
-    color: #aaa;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
+    padding: 10px 0;
+    color: #ddd;
 }
 
 .pricing-features i {
-    margin-right: 10px;
-    width: 20px;
-}
-
-.pricing-features .fa-check {
-    color: #28a745;
-}
-
-.pricing-features .fa-times {
-    color: #dc3545;
-}
-
-.pricing-footer {
-    margin-top: auto;
-}
-
-.pricing-footer .btn {
-    width: 100%;
-    padding: 12px;
-}
-
-.btn-primary {
-    /* background: #ffa502; */
-    border-color: #ffa502;
-}
-
-.btn-outline-primary {
     color: #ffa502;
-    border-color: #ffa502;
+    margin-right: 10px;
 }
 
-.btn-outline-primary:hover {
-    background: #ffa502;
-    color: #fff;
+.pricing-action {
+    margin-top: 30px;
 }
 
-/* FAQ Styles */
-.pricing-faq {
-    margin-top: 80px;
-}
-
-.pricing-faq .card {
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.1);
-    margin-bottom: 10px;
-}
-
-.pricing-faq .card-header {
+/* Comparison Table */
+.table {
+    color: #ddd;
     background: rgba(255,255,255,0.05);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    padding: 0;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
-.pricing-faq .btn-link {
-    color: #fff;
-    width: 100%;
-    text-align: left;
-    padding: 15px;
-    text-decoration: none;
+.table th {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.1);
 }
 
-.pricing-faq .card-body {
-    color: #aaa;
-    padding: 20px;
+.table td {
+    border-color: rgba(255,255,255,0.1);
+}
+
+.table i.fa-check {
+    color: #4CAF50;
+}
+
+.table i.fa-times {
+    color: #f44336;
 }
 
 @media (max-width: 768px) {
     .pricing-card {
         margin-bottom: 30px;
-    }
-    
-    .price {
-        font-size: 2rem;
     }
 }

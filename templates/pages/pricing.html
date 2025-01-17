@@ -1,58 +1,46 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<div class="pricing-header">
-    <div class="container">
-        <h1>Choose Your Plan</h1>
-        <p>Select the perfect plan for your entertainment needs</p>
-    </div>
-</div>
+{% block title %}Pricing Plans{% endblock %}
 
+{% block content %}
 <div class="container py-5">
-    <div class="row justify-content-center pricing-row">
-        <!-- Free Plan -->
+    <div class="text-center mb-5">
+        <h1>Choose Your Plan</h1>
+        <p class="lead">Select the perfect plan for your entertainment needs</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <!-- Classic Monthly Plan -->
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="pricing-card">
                 <div class="pricing-header">
-                    <h3>Free</h3>
+                    <h3>Classic Monthly</h3>
                     <div class="price">
                         <span class="currency">$</span>
-                        <span class="amount">0</span>
-                        <span class="period">/month</span>
+                        <span class="amount">9</span>
+                        <span class="period">.99/mo</span>
                     </div>
                 </div>
                 <div class="pricing-features">
                     <ul>
-                        <li>
-                            <i class="fas fa-check"></i>
-                            Access to free movies
-                        </li>
-                        <li>
-                            <i class="fas fa-check"></i>
-                            SD quality (480p)
-                        </li>
-                        <li>
-                            <i class="fas fa-check"></i>
-                            Watch on 1 device
-                        </li>
-                        <li>
-                            <i class="fas fa-times"></i>
-                            No downloads
-                        </li>
-                        <li>
-                            <i class="fas fa-times"></i>
-                            Contains ads
-                        </li>
+                        <li><i class="fas fa-check"></i> Access to classic movies library</li>
+                        <li><i class="fas fa-check"></i> Stream on 1 device</li>
+                        <li><i class="fas fa-check"></i> Standard definition (SD)</li>
+                        <li><i class="fas fa-check"></i> Ad-free experience</li>
                     </ul>
                 </div>
-                <div class="pricing-footer">
-                    <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary btn-lg">Get Started</a>
+                <div class="pricing-action">
+                    <form action="{% url 'core:checkout' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="plan_id" value="{{ classic_plan.id }}">
+                        <button type="submit" class="btn btn-primary btn-block">Get Started</button>
+                    </form>
                 </div>
             </div>
         </div>
 
-        <!-- Monthly Plan -->
+        <!-- Premium Monthly Plan -->
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="pricing-card popular">
                 <div class="popular-badge">Most Popular</div>
@@ -60,130 +48,113 @@
                     <h3>Premium Monthly</h3>
                     <div class="price">
                         <span class="currency">$</span>
-                        <span class="amount">10</span>
-                        <span class="period">/month</span>
+                        <span class="amount">14</span>
+                        <span class="period">.99/mo</span>
                     </div>
                 </div>
                 <div class="pricing-features">
                     <ul>
-                        <li>
-                            <i class="fas fa-check"></i>
-                            Access all content
-                        </li>
-                        <li>
-                            <i class="fas fa-check"></i>
-                            HD & 4K quality
-                        </li>
-                        <li>
-                            <i class="fas fa-check"></i>
-                            Watch on 4 devices
-                        </li>
-                        <li>
-                            <i class="fas fa-check"></i>
-                            Download movies
-                        </li>
-                        <li>
-                            <i class="fas fa-check"></i>
-                            Ad-free experience
-                        </li>
+                        <li><i class="fas fa-check"></i> Full movie library access</li>
+                        <li><i class="fas fa-check"></i> Stream on 2 devices</li>
+                        <li><i class="fas fa-check"></i> High definition (HD)</li>
+                        <li><i class="fas fa-check"></i> Ad-free experience</li>
+                        <li><i class="fas fa-check"></i> Offline viewing</li>
                     </ul>
                 </div>
-                <div class="pricing-footer">
-                    <a href="" class="btn btn-primary btn-lg most-popular">Subscribe Now</a>
+                <div class="pricing-action">
+                    <form action="{% url 'core:checkout' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="plan_id" value="{{ premium_plan.id }}">
+                        <button type="submit" class="btn btn-primary btn-block">Get Started</button>
+                    </form>
                 </div>
             </div>
         </div>
 
-        <!-- Annual Plan -->
+        <!-- Elite Annual Plan -->
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="pricing-card">
-                <div class="savings-badge">Save 8%</div>
+                <div class="savings-badge">Save 20%</div>
                 <div class="pricing-header">
-                    <h3>Premium Annual</h3>
+                    <h3>Elite Annual</h3>
                     <div class="price">
                         <span class="currency">$</span>
-                        <span class="amount">110</span>
-                        <span class="period">/year</span>
-                    </div>
-                    <div class="monthly-equivalent">
-                        Just $9.17/month
+                        <span class="amount">199</span>
+                        <span class="period">.99/yr</span>
                     </div>
                 </div>
                 <div class="pricing-features">
                     <ul>
-                        <li>
-                            <i class="fas fa-check"></i>
-                            All Premium features
-                        </li>
-                        <li>
-                            <i class="fas fa-check"></i>
-                            HD & 4K quality
-                        </li>
-                        <li>
-                            <i class="fas fa-check"></i>
-                            Watch on 4 devices
-                        </li>
-                        <li>
-                            <i class="fas fa-check"></i>
-                            Priority support
-                        </li>
-                        <li>
-                            <i class="fas fa-check"></i>
-                            Early access to new features
-                        </li>
+                        <li><i class="fas fa-check"></i> Unlimited access to all content</li>
+                        <li><i class="fas fa-check"></i> Stream on 4 devices</li>
+                        <li><i class="fas fa-check"></i> Ultra HD & 4K quality</li>
+                        <li><i class="fas fa-check"></i> Priority support</li>
+                        <li><i class="fas fa-check"></i> Early access to new releases</li>
+                        <li><i class="fas fa-check"></i> Offline downloads</li>
                     </ul>
                 </div>
-                <div class="pricing-footer">
-                    <a href="" class="btn btn-outline-primary btn-lg">Subscribe & Save</a>
+                <div class="pricing-action">
+                    <form action="{% url 'core:checkout' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="plan_id" value="{{ elite_plan.id }}">
+                        <button type="submit" class="btn btn-primary btn-block">Get Started</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- FAQ Section -->
-    <div class="pricing-faq mt-5">
-        <h2 class="text-center mb-4">Frequently Asked Questions</h2>
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="accordion" id="pricingFaq">
-                    <!-- FAQ Item 1 -->
-                    <div class="card">
-                        <div class="card-header" id="faqOne">
-                            <h2 class="mb-0">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne">
-                                    Can I change my plan later?
-                                </button>
-                            </h2>
-                        </div>
-                        <div id="collapseOne" class="collapse show" data-parent="#pricingFaq">
-                            <div class="card-body">
-                                Yes, you can upgrade, downgrade, or cancel your plan at any time. Changes will take effect at the start of your next billing cycle.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- FAQ Item 2 -->
-                    <div class="card">
-                        <div class="card-header" id="faqTwo">
-                            <h2 class="mb-0">
-                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo">
-                                    What payment methods do you accept?
-                                </button>
-                            </h2>
-                        </div>
-                        <div id="collapseTwo" class="collapse" data-parent="#pricingFaq">
-                            <div class="card-body">
-                                We accept all major credit cards, PayPal, and various local payment methods depending on your region.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Features Comparison -->
+    <div class="comparison-section mt-5">
+        <h2 class="text-center mb-4">Compare Plans</h2>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Features</th>
+                        <th>Classic Monthly</th>
+                        <th>Premium Monthly</th>
+                        <th>Elite Annual</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Movie Library</td>
+                        <td>Classic Movies</td>
+                        <td>Full Library</td>
+                        <td>Full Library + Exclusives</td>
+                    </tr>
+                    <tr>
+                        <td>Streaming Quality</td>
+                        <td>SD</td>
+                        <td>HD</td>
+                        <td>UHD & 4K</td>
+                    </tr>
+                    <tr>
+                        <td>Simultaneous Streams</td>
+                        <td>1 Device</td>
+                        <td>2 Devices</td>
+                        <td>4 Devices</td>
+                    </tr>
+                    <tr>
+                        <td>Offline Viewing</td>
+                        <td><i class="fas fa-times"></i></td>
+                        <td><i class="fas fa-check"></i></td>
+                        <td><i class="fas fa-check"></i></td>
+                    </tr>
+                    <tr>
+                        <td>Early Access</td>
+                        <td><i class="fas fa-times"></i></td>
+                        <td><i class="fas fa-times"></i></td>
+                        <td><i class="fas fa-check"></i></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/pricing.css' %}">
+<link rel="stylesheet" href="{% static 'css/pricing.css' %}">
 {% endblock %}

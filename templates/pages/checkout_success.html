@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="payment-status-card success">
+        <div class="status-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h1>Payment Successful!</h1>
+        <p class="lead">Thank you for subscribing to our service.</p>
+        <div class="status-details">
+            <p>Your subscription has been activated and you now have full access to all features included in your plan.</p>
+            <ul>
+                <li><i class="fas fa-check"></i> Access to premium content</li>
+                <li><i class="fas fa-check"></i> HD/4K streaming (depending on your plan)</li>
+                <li><i class="fas fa-check"></i> Ad-free experience</li>
+            </ul>
+        </div>
+        <div class="action-buttons">
+            <a href="{% url 'movies:index' %}" class="btn btn-primary">
+                <i class="fas fa-film"></i> Browse Movies
+            </a>
+            <a href="{% url 'series:index' %}" class="btn btn-secondary">
+                <i class="fas fa-tv"></i> Browse TV Shows
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.payment-status-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.payment-status-card.success .status-icon {
+    color: #4CAF50;
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.payment-status-card h1 {
+    margin-bottom: 15px;
+}
+
+.status-details {
+    margin: 30px 0;
+    text-align: left;
+}
+
+.status-details ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.status-details li {
+    padding: 10px 0;
+    color: #ddd;
+}
+
+.status-details i {
+    color: #4CAF50;
+    margin-right: 10px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.action-buttons .btn {
+    padding: 12px 25px;
+}
+
+@media (max-width: 576px) {
+    .action-buttons {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Get the current URL
+    const url = new URL(window.location.href);
+    
+    // Remove the session_id query parameter
+    url.searchParams.delete('session_id');
+    
+    // Replace the current URL without reloading the page
+    window.history.replaceState({}, document.title, url.toString());
+</script>
+{% endblock %}
