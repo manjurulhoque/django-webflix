@@ -165,7 +165,7 @@
                     {% endif %}
 
                     <div class="reviews-list">
-                        {% for review in movie.reviews.all %}
+                        {% for review in reviews %}
                             <div class="review-item">
                                 <div class="review-header">
                                     <img src="https://www.gravatar.com/avatar/{{ review.user.email|md5 }}?s=50&d=mp" 
@@ -184,6 +184,9 @@
                                 <p class="review-comment">{{ review.comment }}</p>
                             </div>
                         {% endfor %}
+                        {% if reviews.has_next %}
+                            <a href="?page={{ reviews.next_page_number }}" class="btn btn-primary load-more">Load More</a>
+                        {% endif %}
                     </div>
                 </section>
             </div>

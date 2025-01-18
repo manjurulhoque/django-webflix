@@ -32,7 +32,6 @@ class MovieDetailsView(DetailView):
         context = super().get_context_data(**kwargs)
         movie = self.get_object()
         user = self.request.user
-        print(self.request.get_host)
 
         # Get user membership status
         context["user_membership"] = None
