@@ -8,4 +8,5 @@ urlpatterns = [
     path('details/<slug:slug>/', views.MovieDetailsView.as_view(), name='details'),
     path("<slug:slug>/favorite/", views.ToggleMovieFavoriteView.as_view(), name="toggle_favorite"),
     path("<slug:slug>/watchlist/", views.ToggleMovieWatchlistView.as_view(), name="toggle_watchlist"),
+    path("<slug:slug>/review/", views.AddReviewView.as_view(), name="add_review"),
 ]

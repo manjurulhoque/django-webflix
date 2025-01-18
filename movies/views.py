@@ -7,6 +7,8 @@ from django.views import View
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 from .models import (
     Movie,
@@ -15,6 +17,7 @@ from .models import (
     MovieWatchList,
     Genre,
     MovieFavorite,
+    Review,
 )
 
 
@@ -29,6 +32,7 @@ class MovieDetailsView(DetailView):
         context = super().get_context_data(**kwargs)
         movie = self.get_object()
         user = self.request.user
+        print(self.request.get_host)
 
         # Get user membership status
         context["user_membership"] = None
@@ -74,7 +78,8 @@ class MovieDetailsView(DetailView):
         context["meta"] = {
             "title": f"{movie.title} ({movie.year}) - Watch Online",
             "description": movie.meta_description or movie.description[:160],
-            "keywords": movie.meta_keywords or f"{movie.title}, {movie.year}, watch online, movie",
+            "keywords": movie.meta_keywords
+            or f"{movie.title}, {movie.year}, watch online, movie",
             "image": movie.thumbnail,
         }
 
@@ -219,3 +224,21 @@ class ToggleMovieWatchlistView(LoginRequiredMixin, View):
             in_watch_list = True
 
         return JsonResponse({"status": "success", "in_watch_list": in_watch_list})
+
+
+class AddReviewView(LoginRequiredMixin, View):
+    def post(self, request, slug):
+        movie = get_object_or_404(Movie, slug=slug)
+        if Review.objects.filter(user=request.user, movie=movie).exists():
+            return JsonResponse(
+                {"status": "error", "message": "You have already reviewed this movie"},
+                status=400,
+            )
+
+        Review.objects.create(
+            user=request.user,
+            movie=movie,
+            rating=request.POST.get("rating"),
+            comment=request.POST.get("comment"),
+        )
+        return JsonResponse({"status": "success"})

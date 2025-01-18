@@ -142,18 +142,25 @@
                     
                     {% if user.is_authenticated %}
                         <div class="review-form">
-                            <div class="rating-input">
+                            {% csrf_token %}
+                            <div class="rating-input" id="rating-input">
                                 <div class="rate">
                                     {% for i in "54321" %}
                                         <input type="radio" id="star{{ i }}" name="rate" value="{{ i }}"/>
-                                        <label for="star{{ i }}" title="{{ i }} stars"></label>
+                                        <label for="star{{ i }}" onclick="setRate({{ i }})">{{ i }} stars</label>
                                     {% endfor %}
                                 </div>
                             </div>
-                            <textarea class="form-control review-text" placeholder="Write your review..."></textarea>
-                            <button class="btn btn-primary submit-review" data-movie-id="{{ movie.id }}">
+                            <textarea class="form-control review-text input-review" placeholder="Write your review..."></textarea>
+                            <button class="btn btn-primary submit-review" data-movie="{{ movie.slug }}">
                                 Submit Review
                             </button>
+                            <div class="loading-review" style="display: none;">
+                                <i class="fas fa-spinner fa-spin"></i> Submitting...
+                            </div>
+                            <div class="success-review" style="display: none;">
+                                <i class="fas fa-check-circle"></i> Review submitted successfully!
+                            </div>
                         </div>
                     {% endif %}
 

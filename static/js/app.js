@@ -3,13 +3,19 @@
     var baseUrl;
     var baseUrl = $("body").attr("alt");
 
-    function getCookie(t) {
-        for (var e = t + "=", i = decodeURIComponent(document.cookie).split(";"), a = 0; a < i.length; a++) {
-            for (var s = i[a];
-                 " " == s.charAt(0);) s = s.substring(1);
-            if (0 == s.indexOf(e)) return s.substring(e.length, s.length)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
         }
-        return ""
+        return cookieValue;
     }
 
     function setCookie(t, e, i) {
@@ -150,36 +156,43 @@
     var rating = 1;
 
     function setRate(t) {
-        rating = t
+        rating = t;
     }
-
-    function rate(t) {
-        var e = $("#rate-input").attr("alt"),
-            i = $(".input-review").val(),
-            a = {
-                id: e,
+    
+    function rate(slug) {
+        var comment = $(".input-review").val(),
+            data = {
                 rating: rating,
-                review: i,
-                type: t
+                comment: comment,
             };
-        $(".submit-review").hide(), $(".loading-review").css("display", "block"), $.ajax({
-            type: "post",
-            data: a,
-            url: baseUrl + "/ajax/rating/add.html",
-            success: function (t) {
-                $(".input-review").val(""), $(".submit-review").show(), $(".loading-review").css("display", "none"), $(".success-review").show()
+        
+        $(".submit-review").hide();
+        $(".loading-review").css("display", "block");
+        
+        $.ajax({
+            type: "POST",
+            url: "/movies/" + slug + "/review/",
+            data: data,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
             },
-            fail: function () {
-                $(".input-review").val(""), $(".submit-review").show(), $(".loading-review").css("display", "none"), $(".error-review").show(), setTimeout(function () {
-                    $(".error-review").fadeOut()
-                }, 2e3)
+            success: function(response) {
+                $(".input-review").val("");
+                $(".submit-review").show();
+                $(".loading-review").css("display", "none");
+                $(".success-review").show();
+                
+                // Optional: Reload reviews section or append new review
+                setTimeout(function() {
+                    location.reload();
+                }, 1000);
             },
-            error: function (t) {
-                $(".input-review").val(""), $(".submit-review").show(), $(".loading-review").hide(), $(".error-review").show(), setTimeout(function () {
-                    $(".error-review").fadeOut()
-                }, 2e3)
+            error: function(xhr, errmsg, err) {
+                $(".submit-review").show();
+                $(".loading-review").css("display", "none");
+                alert("There was an error submitting your review. Please try again.");
             }
-        })
+        });
     }
 
     $("#star5").on("click", function () {
@@ -219,14 +232,14 @@
     }), $(".open-login").on("click", function () {
         return $(".login-full").show(), !1
     }), $(".notif-close").on("click", function () {
-        $(".login-full").hide(), $(".serie-dialog").hide()
+        $(".login-full").hide(), $(".series-dialog").hide();
     }), $(".submit-review").on("click", function () {
-        rate($(this).attr("type"))
+        rate($(this).attr("data-movie"));
     }), $(".submit-comment").on("click", function () {
         var t = $(".input-comment").val(),
             e = $(".input-comment").attr("alt"),
             i = {
-                id: $(this).attr("alt"),
+                slug: $(this).attr("alt"),
                 comment: t,
                 type: e
             };
