@@ -109,3 +109,12 @@ class UserEditProfileView(UpdateView):
 
     def get_object(self):
         return self.request.user
+
+
+class UserSubscriptionsView(TemplateView):
+    template_name = "accounts/subscriptions.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["user_subscription"] = self.request.user.subscription
+        return context
