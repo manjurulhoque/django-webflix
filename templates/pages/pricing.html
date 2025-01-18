@@ -8,12 +8,31 @@
     <div class="text-center mb-5">
         <h1>Choose Your Plan</h1>
         <p class="lead">Select the perfect plan for your entertainment needs</p>
+        {% if user_subscription %}
+            <div class="current-subscription-info">
+                <p>Your current plan: <strong>{{ user_subscription.plan.product.name }}</strong></p>
+
+                {% if user_subscription.cancel_at_period_end %}
+                    <p>Your subscription is set to cancel at the end of the billing period.</p>
+                {% else %}
+                    <form action="{% url 'core:cancel_subscription' %}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel your subscription?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger" style="margin-top: 10px;">
+                            <i class="fas fa-times-circle"></i> Cancel Subscription
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
 
     <div class="row justify-content-center">
         <!-- Classic Monthly Plan -->
         <div class="col-lg-4 col-md-6 mb-4">
-            <div class="pricing-card">
+            <div class="pricing-card {% if user_subscription and user_subscription.plan.id == classic_plan.id %}current{% endif %}">
+                {% if user_subscription and user_subscription.plan.id == classic_plan.id %}
+                    <div class="current-badge">Current Plan {% if user_subscription.cancel_at_period_end %}<span class="badge badge-danger">Canceled</span>{% endif %}</div>
+                {% endif %}
                 <div class="pricing-header">
                     <h3>Classic Monthly</h3>
                     <div class="price">
@@ -31,19 +50,36 @@
                     </ul>
                 </div>
                 <div class="pricing-action">
-                    <form action="{% url 'core:checkout' %}" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="plan_id" value="{{ classic_plan.id }}">
-                        <button type="submit" class="btn btn-primary btn-block">Get Started</button>
-                    </form>
+                    {% if user_subscription and user_subscription.plan.id == classic_plan.id and not user_subscription.cancel_at_period_end %}
+                        <button class="btn btn-secondary btn-block" disabled>Current Plan</button>
+                    {% elif user_subscription %}
+                        <form action="{% url 'core:checkout' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="plan_id" value="{{ classic_plan.id }}">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                Change to Classic
+                            </button>
+                        </form>
+                    {% else %}
+                        <form action="{% url 'core:checkout' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="plan_id" value="{{ classic_plan.id }}">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                Get Started
+                            </button>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
         <!-- Premium Monthly Plan -->
         <div class="col-lg-4 col-md-6 mb-4">
-            <div class="pricing-card popular">
+            <div class="pricing-card popular {% if user_subscription and user_subscription.plan.id == premium_plan.id %}current{% endif %}">
                 <div class="popular-badge">Most Popular</div>
+                {% if user_subscription and user_subscription.plan.id == premium_plan.id %}
+                    <div class="current-badge">Current Plan {% if user_subscription.cancel_at_period_end %}<span class="badge badge-danger">Canceled</span>{% endif %}</div>
+                {% endif %}
                 <div class="pricing-header">
                     <h3>Premium Monthly</h3>
                     <div class="price">
@@ -62,19 +98,28 @@
                     </ul>
                 </div>
                 <div class="pricing-action">
-                    <form action="{% url 'core:checkout' %}" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="plan_id" value="{{ premium_plan.id }}">
-                        <button type="submit" class="btn btn-primary btn-block">Get Started</button>
-                    </form>
+                    {% if user_subscription and user_subscription.plan.id == premium_plan.id %}
+                        <button class="btn btn-secondary btn-block" disabled>Current Plan</button>
+                    {% else %}
+                        <form action="{% url 'core:checkout' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="plan_id" value="{{ premium_plan.id }}">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                {% if user_subscription %}Change to Premium{% else %}Get Started{% endif %}
+                            </button>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
         <!-- Elite Annual Plan -->
         <div class="col-lg-4 col-md-6 mb-4">
-            <div class="pricing-card">
+            <div class="pricing-card {% if user_subscription and user_subscription.plan.id == elite_plan.id %}current{% endif %}">
                 <div class="savings-badge">Save 20%</div>
+                {% if user_subscription and user_subscription.plan.id == elite_plan.id %}
+                    <div class="current-badge">Current Plan {% if user_subscription.cancel_at_period_end %}<span class="badge badge-danger">Canceled</span>{% endif %}</div>
+                {% endif %}
                 <div class="pricing-header">
                     <h3>Elite Annual</h3>
                     <div class="price">
@@ -94,11 +139,17 @@
                     </ul>
                 </div>
                 <div class="pricing-action">
-                    <form action="{% url 'core:checkout' %}" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="plan_id" value="{{ elite_plan.id }}">
-                        <button type="submit" class="btn btn-primary btn-block">Get Started</button>
-                    </form>
+                    {% if user_subscription and user_subscription.plan.id == elite_plan.id %}
+                        <button class="btn btn-secondary btn-block" disabled>Current Plan</button>
+                    {% else %}
+                        <form action="{% url 'core:checkout' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="plan_id" value="{{ elite_plan.id }}">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                {% if user_subscription %}Change to Elite{% else %}Get Started{% endif %}
+                            </button>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -157,4 +208,58 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/pricing.css' %}">
+<style>
+/* Style for current plan */
+.pricing-card.current {
+    border: 2px solid #4CAF50;
+}
+
+.current-badge {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: #4CAF50;
+    color: #fff;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    z-index: 1;
+}
+
+.pricing-card.current.popular {
+    border: 2px solid #4CAF50;
+}
+
+.pricing-card.current .pricing-header h3 {
+    color: #4CAF50;
+}
+
+.current-subscription-info {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.current-subscription-info p {
+    margin-bottom: 10px;
+}
+
+.current-subscription-info strong {
+    color: #4CAF50;
+}
+
+.btn-outline-danger {
+    color: #f44336;
+    border-color: #f44336;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+    background: #f44336;
+    color: #fff;
+}
+</style>
 {% endblock %}

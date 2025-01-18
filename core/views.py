@@ -4,6 +4,7 @@ from djstripe.models import Price, Subscription
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from movies.models import Movie
 from series.models import Series
@@ -63,11 +64,14 @@ def refund_policy(request):
 
 
 def pricing(request):
+    user = request.user
     context = {
         "classic_plan": Price.objects.get(product__name="Classic"),
         "premium_plan": Price.objects.get(product__name="Premium"),
         "elite_plan": Price.objects.get(product__name="Elite"),
     }
+    if user.is_authenticated:
+        context["user_subscription"] = user.subscription
     return render(request, "pages/pricing.html", context)
 
 
@@ -114,3 +118,27 @@ def checkout_success(request):
 @login_required
 def checkout_canceled(request):
     return render(request, "pages/checkout_canceled.html")
+
+
+@login_required
+@require_POST
+def cancel_subscription(request):
+    stripe = get_stripe_module()
+    user = request.user
+    
+    if user.subscription:
+        # Cancel at period end
+        stripe.Subscription.modify(
+            user.subscription.id,
+            cancel_at_period_end=True
+        )
+        
+        # Update the local subscription
+        user.subscription.cancel_at_period_end = True
+        user.subscription.save()
+        
+        messages.success(request, "Your subscription will be canceled at the end of the billing period.")
+    else:
+        messages.error(request, "No active subscription found.")
+    
+    return redirect('core:pricing')

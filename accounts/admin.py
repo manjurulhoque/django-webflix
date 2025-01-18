@@ -23,7 +23,7 @@ class UserAdmin(UserAdmin):
             return self.add_fieldsets
             
         return [
-            (None, {'fields': ('email', 'password')}),
+            (None, {'fields': ('email', 'password', 'subscription')}),
             ('Personal info', {'fields': ('first_name', 'last_name')}),
             ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ]
