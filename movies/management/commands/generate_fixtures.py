@@ -13,7 +13,7 @@ from movies.models import (
 
 User = get_user_model()
 
-TMDB_API_KEY = 'fb6e34ebff1505eb93cafca91918b313'  # Replace with your TMDB API key
+TMDB_API_KEY = 'YOUR_KEY'  # Replace with your TMDB API key
 TMDB_BASE_URL = 'https://api.themoviedb.org/3'
 
 class Command(BaseCommand):
