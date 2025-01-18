@@ -1,4 +1,4 @@
-from django.contrib import messages, auth
+from django.contrib import auth
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.generic import (
@@ -7,14 +7,17 @@ from django.views.generic import (
     RedirectView,
     TemplateView,
     UpdateView,
+    ListView,
 )
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from djstripe.models import Subscription
+from django.db.models import Q
 
 from accounts.forms import UserRegistrationForm, UserLoginForm, UserEditProfileForm
 from accounts.models import User
-
+from series.models import SeriesFavorite, SeriesWatchList, SeriesWatchHistory
+from movies.models import MovieFavorite, MovieWatchList, MovieWatchHistory
 
 class RegisterView(CreateView):
     model = User
@@ -115,22 +118,91 @@ class UserEditProfileView(UpdateView):
 
 class UserSubscriptionsView(LoginRequiredMixin, TemplateView):
     template_name = "accounts/subscriptions.html"
-    login_url = 'accounts:login'
+    login_url = "accounts:login"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        
+
         # Get current subscription
-        context["user_subscription"] = getattr(user, 'subscription', None)
-        
+        context["user_subscription"] = getattr(user, "subscription", None)
+
         # Get subscription history
-        context["subscription_history"] = Subscription.objects.filter(
-            customer__email=user.email
-        ).exclude(
-            id=user.subscription.id if user.subscription else None
-        ).select_related(
-            'plan', 'plan__product'
-        ).order_by('-created')
-        
+        context["subscription_history"] = (
+            Subscription.objects.filter(customer__email=user.email)
+            .exclude(id=user.subscription.id if user.subscription else None)
+            .select_related("plan", "plan__product")
+            .order_by("-created")
+        )
+
+        return context
+
+
+class UserFavoritesView(LoginRequiredMixin, TemplateView):
+    template_name = "accounts/user/favorites.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        # Get series favorites
+        context["series_favorites"] = (
+            SeriesFavorite.objects.filter(user=user)
+            .select_related("series")
+            .order_by("-created")
+        )
+
+        # Get movie favorites
+        context["movie_favorites"] = (
+            MovieFavorite.objects.filter(user=user)
+            .select_related("movie")
+            .order_by("-created")
+        )
+
+        return context
+
+
+class UserWatchListView(LoginRequiredMixin, TemplateView):
+    template_name = "accounts/user/watchlist.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        # Get series watchlist
+        context["series_watchlist"] = (
+            SeriesWatchList.objects.filter(user=user)
+            .select_related("series")
+        )
+
+        # Get movie watchlist
+        context["movie_watchlist"] = (
+            MovieWatchList.objects.filter(user=user)
+            .select_related("movie")
+        )
+
+        return context
+
+
+class UserWatchHistoryView(LoginRequiredMixin, TemplateView):
+    template_name = "accounts/user/history.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        # Get series history
+        context["series_history"] = (
+            SeriesWatchHistory.objects.filter(user=user)
+            .select_related("series", "episode")
+            .order_by("-updated")
+        )
+
+        # Get movie history
+        context["movie_history"] = (
+            MovieWatchHistory.objects.filter(user=user)
+            .select_related("movie")
+            .order_by("-updated")
+        )
+
         return context

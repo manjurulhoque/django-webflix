@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Favorites{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="page-header" style="margin-bottom: 20px !important;">
+        <h1><i class="fas fa-heart"></i> My Favorites</h1>
+    </div>
+
+    {% if series_favorites or movie_favorites %}
+        <!-- Movies Section -->
+        {% if movie_favorites %}
+            <div class="section">
+                <h2><i class="fas fa-film"></i> Movies</h2>
+                <div class="movies-grid">
+                    {% for favorite in movie_favorites %}
+                        {% include 'movies/includes/movie_card.html' with movie=favorite.movie %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Series Section -->
+        {% if series_favorites %}
+            <div class="section">
+                <h2><i class="fas fa-tv"></i> TV Series</h2>
+                <div class="series-grid">
+                    {% for favorite in series_favorites %}
+                        {% include 'series/includes/series_card.html' with series=favorite.series %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-heart"></i>
+            <h3>No Favorites Yet</h3>
+            <p>Start adding movies and TV shows to your favorites list.</p>
+            <div class="action-buttons">
+                <a href="{% url 'movies:index' %}" class="btn btn-primary">Browse Movies</a>
+                <a href="{% url 'series:index' %}" class="btn btn-primary">Browse TV Shows</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.section {
+    margin-bottom: 40px;
+}
+
+.section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section h2 i {
+    color: #ffa502;
+}
+
+.movies-grid,
+.series-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: #ffa502;
+    margin-bottom: 20px;
+}
+
+.empty-state h3 {
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.empty-state p {
+    color: #aaa;
+    margin-bottom: 25px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %} 

@@ -102,7 +102,7 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
         })
 
 
-class ToggleWatchlistView(LoginRequiredMixin, View):
+class ToggleWatchListView(LoginRequiredMixin, View):
     def post(self, request, slug):
         series = get_object_or_404(Series, slug=slug)
         watchlist, created = SeriesWatchList.objects.get_or_create(
@@ -141,35 +141,3 @@ class UpdateWatchHistoryView(LoginRequiredMixin, View):
         
         return JsonResponse({'status': 'success'})
 
-
-class UserFavoritesView(LoginRequiredMixin, ListView):
-    template_name = 'series/user/favorites.html'
-    context_object_name = 'favorites'
-    paginate_by = 24
-
-    def get_queryset(self):
-        return SeriesFavorite.objects.filter(
-            user=self.request.user
-        ).select_related('series').order_by('-created')
-
-
-class UserWatchlistView(LoginRequiredMixin, ListView):
-    template_name = 'series/user/watchlist.html'
-    context_object_name = 'watchlist'
-    paginate_by = 24
-
-    def get_queryset(self):
-        return SeriesWatchList.objects.filter(
-            user=self.request.user
-        ).select_related('series').order_by('-created')
-
-
-class UserWatchHistoryView(LoginRequiredMixin, ListView):
-    template_name = 'series/user/history.html'
-    context_object_name = 'history'
-    paginate_by = 24
-
-    def get_queryset(self):
-        return SeriesWatchHistory.objects.filter(
-            user=self.request.user
-        ).select_related('series', 'episode').order_by('-updated')

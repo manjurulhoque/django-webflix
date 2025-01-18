@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Watch History{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="page-header">
+        <h1><i class="fas fa-history"></i> Watch History</h1>
+    </div>
+
+    {% if series_history or movie_history %}
+        <!-- Movies Section -->
+        {% if movie_history %}
+            <div class="section">
+                <h2><i class="fas fa-film"></i> Movies</h2>
+                <div class="history-list">
+                    {% for item in movie_history %}
+                        <div class="history-item">
+                            <div class="history-thumbnail">
+                                <img src="{{ item.movie.thumbnail }}" alt="{{ item.movie.title }}">
+                            </div>
+                            <div class="history-info">
+                                <h3>{{ item.movie.title }}</h3>
+                                <div class="progress-info">
+                                    {% if item.completed %}
+                                        <span class="status completed">
+                                            <i class="fas fa-check"></i> Completed
+                                        </span>
+                                    {% else %}
+                                        <span class="status watching">
+                                            <i class="fas fa-clock"></i> {{ item.progress }}% watched
+                                        </span>
+                                    {% endif %}
+                                    <span class="watched-date">
+                                        <i class="far fa-calendar-alt"></i> {{ item.updated|date:"M d, Y" }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="history-actions">
+                                <a href="{% url 'movies:details' item.movie.slug %}" class="btn btn-primary">
+                                    <i class="fas fa-play"></i> Watch Again
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Series Section -->
+        {% if series_history %}
+            <div class="section">
+                <h2><i class="fas fa-tv"></i> TV Series</h2>
+                <div class="history-list">
+                    {% for item in series_history %}
+                        <div class="history-item">
+                            <div class="history-thumbnail">
+                                <img src="{{ item.series.thumbnail }}" alt="{{ item.series.title }}">
+                            </div>
+                            <div class="history-info">
+                                <h3>{{ item.series.title }}</h3>
+                                <div class="episode-info">
+                                    Season {{ item.episode.season.number }} Episode {{ item.episode.number }}: {{ item.episode.title }}
+                                </div>
+                                <div class="progress-info">
+                                    {% if item.completed %}
+                                        <span class="status completed">
+                                            <i class="fas fa-check"></i> Completed
+                                        </span>
+                                    {% else %}
+                                        <span class="status watching">
+                                            <i class="fas fa-clock"></i> {{ item.progress }}% watched
+                                        </span>
+                                    {% endif %}
+                                    <span class="watched-date">
+                                        <i class="far fa-calendar-alt"></i> {{ item.updated|date:"M d, Y" }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="history-actions">
+                                <a href="{% url 'series:details' item.series.slug %}" class="btn btn-primary">
+                                    <i class="fas fa-play"></i> Continue
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-history"></i>
+            <h3>No Watch History</h3>
+            <p>Your watch history will appear here once you start watching.</p>
+            <div class="action-buttons">
+                <a href="{% url 'movies:index' %}" class="btn btn-primary">Browse Movies</a>
+                <a href="{% url 'series:index' %}" class="btn btn-primary">Browse TV Shows</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
