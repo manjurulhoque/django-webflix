@@ -83,6 +83,58 @@
             </div>
         {% endif %}
     </div>
+
+    {% if user_subscription %}
+        <div class="subscription-history">
+            <h2><i class="fas fa-history"></i> Subscription History</h2>
+            
+            <div class="history-list">
+                {% if subscription_history %}
+                    {% for subscription in subscription_history %}
+                        <div class="history-item">
+                            <div class="history-header">
+                                <h3>{{ subscription.plan.product.name }}</h3>
+                                <span class="status {% if subscription.status == 'canceled' %}canceled{% else %}ended{% endif %}">
+                                    {{ subscription.status|title }}
+                                </span>
+                            </div>
+                            
+                            <div class="history-details">
+                                <div class="detail">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <div class="detail-info">
+                                        <span class="label">Period</span>
+                                        <span class="value">
+                                            {{ subscription.current_period_start|date:"M d, Y" }} - 
+                                            {{ subscription.current_period_end|date:"M d, Y" }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="detail">
+                                    <i class="fas fa-credit-card"></i>
+                                    <div class="detail-info">
+                                        <span class="label">Amount</span>
+                                        <span class="value">${{ subscription.plan.amount|floatformat:2 }}/{{ subscription.plan.interval }}</span>
+                                    </div>
+                                </div>
+                                {% if subscription.canceled_at %}
+                                    <div class="detail">
+                                        <i class="fas fa-times-circle"></i>
+                                        <div class="detail-info">
+                                            <span class="label">Canceled</span>
+                                            <span class="value">{{ subscription.canceled_at|date:"M d, Y" }}</span>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No subscription history found.</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
 
@@ -252,6 +304,110 @@
             
             .subscription-cta .btn {
                 width: 100%;
+            }
+        }
+
+        /* Subscription History Styles */
+        .subscription-history {
+            margin-top: 40px;
+        }
+
+        .subscription-history h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subscription-history h2 i {
+            color: #ffa502;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .history-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .history-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .status {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .status.canceled {
+            background: rgba(244,67,54,0.1);
+            color: #f44336;
+        }
+
+        .status.ended {
+            background: rgba(158,158,158,0.1);
+            color: #9e9e9e;
+        }
+
+        .history-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .detail {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .detail i {
+            color: #ffa502;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .detail-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-info .label {
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+
+        .detail-info .value {
+            color: #ddd;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            .history-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .history-details {
+                grid-template-columns: 1fr;
             }
         }
     </style>

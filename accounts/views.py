@@ -10,6 +10,7 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from djstripe.models import Subscription
 
 from accounts.forms import UserRegistrationForm, UserLoginForm, UserEditProfileForm
 from accounts.models import User
@@ -118,5 +119,18 @@ class UserSubscriptionsView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["user_subscription"] = getattr(self.request.user, 'subscription', None)
+        user = self.request.user
+        
+        # Get current subscription
+        context["user_subscription"] = getattr(user, 'subscription', None)
+        
+        # Get subscription history
+        context["subscription_history"] = Subscription.objects.filter(
+            customer__email=user.email
+        ).exclude(
+            id=user.subscription.id if user.subscription else None
+        ).select_related(
+            'plan', 'plan__product'
+        ).order_by('-created')
+        
         return context
