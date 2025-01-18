@@ -9,6 +9,7 @@ from django.views.generic import (
     UpdateView,
 )
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from accounts.forms import UserRegistrationForm, UserLoginForm, UserEditProfileForm
 from accounts.models import User
@@ -111,10 +112,11 @@ class UserEditProfileView(UpdateView):
         return self.request.user
 
 
-class UserSubscriptionsView(TemplateView):
+class UserSubscriptionsView(LoginRequiredMixin, TemplateView):
     template_name = "accounts/subscriptions.html"
+    login_url = 'accounts:login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["user_subscription"] = self.request.user.subscription
+        context["user_subscription"] = getattr(self.request.user, 'subscription', None)
         return context
