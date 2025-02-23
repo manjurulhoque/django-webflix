@@ -9,7 +9,7 @@ contextlib2==21.6.0
 distlib==0.3.9
 distro==1.9.0
 Django==5.1.4
-djstripe==2.9.0
+djstripe==2.8.4
 html5lib==1.1
 idna==3.10
 ipaddr==2.2.0
