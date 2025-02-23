@@ -19,7 +19,7 @@ RUN apk update \
         libmagic \
         libxml2-dev \
         libxslt-dev \
-    && python -m pip install pip \
+    && python -m pip install --upgrade pip \
     && pip install -r requirements.txt
 
 # Copy the rest of the application
