@@ -12,7 +12,7 @@ services:
       - static_volume:/usr/src/app/staticfiles
       - media_volume:/usr/src/app/media
     #    env_file: .env
-    command: gunicorn gambo.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn webflix.wsgi:application --bind 0.0.0.0:8000
 
   nginx:
     restart: always
