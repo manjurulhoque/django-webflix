@@ -2,6 +2,8 @@
 
 A Netflix-like streaming platform built with Django that offers subscription-based access to movies and TV series. Users can browse content, manage watchlists, track viewing history, and access premium content through Stripe subscriptions.
 
+Live: [Demo](http://webflix.manjurulhoque.com/)
+
 ![Home Page](screenshots/home.png)
 
 ## Features
